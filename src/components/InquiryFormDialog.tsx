@@ -24,6 +24,7 @@ import {
   InputOTPSlot,
 } from "@/components/ui/input-otp";
 import { useToast } from "@/hooks/use-toast";
+import { CountryCodeSelect } from "./CountryCodeSelect";
 
 interface InquiryFormDialogProps {
   open: boolean;
@@ -32,7 +33,12 @@ interface InquiryFormDialogProps {
   projectId?: string;
   projectName?: string;
 }
-
+interface Country {
+  name: string;
+  code: string;
+  dial_code: string;
+  flag?: string;
+}
 const investmentRanges = [
   "₹1 - 2 Crores",
   "₹2 - 4 Crores",
@@ -43,6 +49,15 @@ const investmentRanges = [
   "₹15 - 20 Crores",
   "₹20+ Crores",
 ];
+
+// const countryCodes = [
+//   { code: "+91", country: "India", flag: "🇮🇳" },
+//   { code: "+1", country: "USA", flag: "🇺🇸" },
+//   { code: "+971", country: "UAE", flag: "🇦🇪" },
+//   { code: "+44", country: "UK", flag: "🇬🇧" },
+//   { code: "+61", country: "Australia", flag: "🇦🇺" },
+//   { code: "+65", country: "Singapore", flag: "🇸🇬" },
+// ];
 
 export const InquiryFormDialog = ({
   open,
@@ -57,6 +72,7 @@ export const InquiryFormDialog = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
+    phoneCountryCode: "+91",
     phone: "",
     email: "",
     investmentType: projectType || "",
@@ -67,8 +83,14 @@ export const InquiryFormDialog = ({
 
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!formData.name || !formData.phone || !formData.email || !formData.investmentType || !formData.investmentRange) {
+
+    if (
+      !formData.name ||
+      !formData.phone ||
+      !formData.email ||
+      !formData.investmentType ||
+      !formData.investmentRange
+    ) {
       toast({
         title: "Missing Information",
         description: "Please fill in all fields to continue.",
@@ -78,15 +100,15 @@ export const InquiryFormDialog = ({
     }
 
     // Validate phone number (basic validation)
-    const phoneRegex = /^[0-9]{10}$/;
-    if (!phoneRegex.test(formData.phone.replace(/\s/g, ""))) {
-      toast({
-        title: "Invalid Phone Number",
-        description: "Please enter a valid 10-digit phone number.",
-        variant: "destructive",
-      });
-      return;
-    }
+    // const phoneRegex = /^[0-9]{10}$/;
+    // if (!phoneRegex.test(formData.phone.replace(/\s/g, ""))) {
+    //   toast({
+    //     title: "Invalid Phone Number",
+    //     description: "Please enter a valid 10-digit phone number.",
+    //     variant: "destructive",
+    //   });
+    //   return;
+    // }
 
     // Validate email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -100,21 +122,22 @@ export const InquiryFormDialog = ({
     }
 
     setIsSubmitting(true);
-    
+
     // Simulate OTP generation (4-6 digits)
     const newOtp = Math.floor(100000 + Math.random() * 900000).toString();
     setGeneratedOtp(newOtp);
-    
+
     // Simulate sending OTP
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
     setIsSubmitting(false);
     setStep("otp");
-    
+
     toast({
       title: "OTP Sent",
       description: `A verification code has been sent to ${formData.phone}. (Demo OTP: ${newOtp})`,
     });
+ 
   };
 
   const handleOtpVerify = async () => {
@@ -128,13 +151,13 @@ export const InquiryFormDialog = ({
     }
 
     setIsSubmitting(true);
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
     // Simulated OTP verification - accept any 6-digit code for demo
     if (otp === generatedOtp || otp.length === 6) {
       setIsSubmitting(false);
       setStep("success");
-      
+
       toast({
         title: "Verified Successfully",
         description: "Redirecting to project details...",
@@ -155,6 +178,7 @@ export const InquiryFormDialog = ({
         setFormData({
           name: "",
           phone: "",
+          phoneCountryCode: "+91",
           email: "",
           investmentType: projectType || "",
           investmentRange: "",
@@ -174,7 +198,7 @@ export const InquiryFormDialog = ({
   const handleResendOtp = async () => {
     const newOtp = Math.floor(100000 + Math.random() * 900000).toString();
     setGeneratedOtp(newOtp);
-    
+
     toast({
       title: "OTP Resent",
       description: `A new verification code has been sent. (Demo OTP: ${newOtp})`,
@@ -191,9 +215,13 @@ export const InquiryFormDialog = ({
             {step === "success" && "Verification Complete"}
           </DialogTitle>
           <DialogDescription className="text-muted-foreground">
-            {step === "form" && (projectName ? `Inquiring about: ${projectName}` : "Fill in your details to learn more")}
+            {step === "form" &&
+              (projectName
+                ? `Inquiring about: ${projectName}`
+                : "Fill in your details to learn more")}
             {step === "otp" && "Enter the OTP sent to your phone"}
-            {step === "success" && "You now have access to detailed project information"}
+            {step === "success" &&
+              "You now have access to detailed project information"}
           </DialogDescription>
         </DialogHeader>
 
@@ -213,21 +241,40 @@ export const InquiryFormDialog = ({
                   id="name"
                   placeholder="Enter your full name"
                   value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, name: e.target.value })
+                  }
                   className="bg-background border-border"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="phone">Phone Number</Label>
-                <Input
-                  id="phone"
-                  type="tel"
-                  placeholder="10-digit mobile number"
-                  value={formData.phone}
-                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                  className="bg-background border-border"
-                />
+                <Label>Phone Number</Label>
+
+                <div className="flex gap-2">
+                  <CountryCodeSelect
+                    value={formData.phoneCountryCode}
+                    onChange={(code) =>
+                      setFormData({
+                        ...formData,
+                        phoneCountryCode: code,
+                      })
+                    }
+                  />
+
+                  <Input
+                    type="tel"
+                    placeholder="Mobile number"
+                    value={formData.phone}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        phone: e.target.value,
+                      })
+                    }
+                    className="flex-1"
+                  />
+                </div>
               </div>
 
               <div className="space-y-2">
@@ -237,7 +284,9 @@ export const InquiryFormDialog = ({
                   type="email"
                   placeholder="your@email.com"
                   value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, email: e.target.value })
+                  }
                   className="bg-background border-border"
                 />
               </div>
@@ -246,7 +295,9 @@ export const InquiryFormDialog = ({
                 <Label>Type of Investment</Label>
                 <Select
                   value={formData.investmentType}
-                  onValueChange={(value) => setFormData({ ...formData, investmentType: value })}
+                  onValueChange={(value) =>
+                    setFormData({ ...formData, investmentType: value })
+                  }
                 >
                   <SelectTrigger className="bg-background border-border">
                     <SelectValue placeholder="Select investment type" />
@@ -262,7 +313,9 @@ export const InquiryFormDialog = ({
                 <Label>Investment Range</Label>
                 <Select
                   value={formData.investmentRange}
-                  onValueChange={(value) => setFormData({ ...formData, investmentRange: value })}
+                  onValueChange={(value) =>
+                    setFormData({ ...formData, investmentRange: value })
+                  }
                 >
                   <SelectTrigger className="bg-background border-border">
                     <SelectValue placeholder="Select investment range" />
@@ -277,14 +330,12 @@ export const InquiryFormDialog = ({
                 </Select>
               </div>
 
-              <Button
-                type="submit"
-                className="w-full"
-                disabled={isSubmitting}
-              >
+              <Button type="submit" className="w-full" disabled={isSubmitting}>
                 {isSubmitting ? (
                   <>
-                    <span className="material-symbols-outlined animate-spin mr-2">progress_activity</span>
+                    <span className="material-symbols-outlined animate-spin mr-2">
+                      progress_activity
+                    </span>
                     Sending OTP...
                   </>
                 ) : (
@@ -304,9 +355,12 @@ export const InquiryFormDialog = ({
             >
               <div className="flex flex-col items-center gap-4">
                 <p className="text-sm text-muted-foreground text-center">
-                  Enter the 6-digit code sent to <span className="text-foreground font-medium">{formData.phone}</span>
+                  Enter the 6-digit code sent to{" "}
+                  <span className="text-foreground font-medium">
+                    {formData.phone}
+                  </span>
                 </p>
-                
+
                 <InputOTP
                   maxLength={6}
                   value={otp}
@@ -346,7 +400,9 @@ export const InquiryFormDialog = ({
                 >
                   {isSubmitting ? (
                     <>
-                      <span className="material-symbols-outlined animate-spin mr-2">progress_activity</span>
+                      <span className="material-symbols-outlined animate-spin mr-2">
+                        progress_activity
+                      </span>
                       Verifying...
                     </>
                   ) : (
@@ -365,7 +421,9 @@ export const InquiryFormDialog = ({
               className="flex flex-col items-center gap-4 py-8"
             >
               <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center">
-                <span className="material-symbols-outlined text-3xl text-primary">check_circle</span>
+                <span className="material-symbols-outlined text-3xl text-primary">
+                  check_circle
+                </span>
               </div>
               <p className="text-center text-muted-foreground">
                 Redirecting you to the project details...

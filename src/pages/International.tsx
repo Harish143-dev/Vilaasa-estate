@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
@@ -6,7 +6,11 @@ import { Button } from "@/components/ui/button";
 import { DiamondIcon } from "@/components/icons/DiamondIcon";
 import { InquiryFormDialog } from "@/components/InquiryFormDialog";
 import { useCurrency } from "@/contexts/CurrencyContext";
-import dubaiVideo from "../assets/dubai.mp4";
+import { Link } from "react-router-dom";
+import video_1 from "../../public/internationalVideo/video_1.mp4";
+import video_2 from "../../public/internationalVideo/video_2.mp4";
+import video_3 from "../../public/internationalVideo/video_3.mp4";
+import video_4 from "../../public/internationalVideo/video_4.mp4";
 
 const properties = [
   {
@@ -14,6 +18,15 @@ const properties = [
     location: "Dubai, UAE",
     name: "Palm Royale Villa",
     price: 3000,
+    type: "investment yield",
+    roi: "15-18% IRR",
+    status: "Investment Open",
+    features: [
+      "Marine Wellness Hub",
+      "Backwater Access",
+      "Eco-Luxury Villas",
+      "3 Prime Locations",
+    ],
     image:
       "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=800&q=80",
   },
@@ -22,6 +35,15 @@ const properties = [
     location: "London, UK",
     name: "The Aurum Residence",
     price: 2000,
+    type: "Villa",
+    roi: "15-18% IRR",
+    status: "Investment Open",
+    features: [
+      "Marine Wellness Hub",
+      "Backwater Access",
+      "Eco-Luxury Villas",
+      "3 Prime Locations",
+    ],
     image:
       "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&q=80",
   },
@@ -30,6 +52,15 @@ const properties = [
     location: "New York, USA",
     name: "Manhattan Heights",
     price: 2000,
+    type: "investment yield",
+    roi: "15-18% IRR",
+    status: "Investment Open",
+    features: [
+      "Marine Wellness Hub",
+      "Backwater Access",
+      "Eco-Luxury Villas",
+      "3 Prime Locations",
+    ],
     image:
       "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800&q=80",
   },
@@ -38,6 +69,15 @@ const properties = [
     location: "Los Angeles, USA",
     name: "Beverly Hills Estate",
     price: 2000,
+    type: "appartment",
+    roi: "15-18% IRR",
+    status: "Investment Open",
+    features: [
+      "Marine Wellness Hub",
+      "Backwater Access",
+      "Eco-Luxury Villas",
+      "3 Prime Locations",
+    ],
     image:
       "https://images.unsplash.com/photo-1613977257363-707ba9348227?w=800&q=80",
   },
@@ -46,6 +86,15 @@ const properties = [
     location: "Singapore",
     name: "Marina Bay Penthouse",
     price: 2000,
+    type: "Villa",
+    roi: "15-18% IRR",
+    status: "Investment Open",
+    features: [
+      "Marine Wellness Hub",
+      "Backwater Access",
+      "Eco-Luxury Villas",
+      "3 Prime Locations",
+    ],
     image:
       "https://images.unsplash.com/photo-1565967511849-76a60a516170?w=800&q=80",
   },
@@ -54,6 +103,15 @@ const properties = [
     location: "Monaco",
     name: "Monaco Harbour Residence",
     price: 2000,
+    type: "Villa",
+    roi: "15-18% IRR",
+    status: "Investment Open",
+    features: [
+      "Marine Wellness Hub",
+      "Backwater Access",
+      "Eco-Luxury Villas",
+      "3 Prime Locations",
+    ],
     image:
       "https://images.unsplash.com/photo-1533929736458-ca588d08c8be?w=800&q=80",
   },
@@ -62,14 +120,32 @@ const properties = [
     location: "Verbier, Switzerland",
     name: "Swiss Alps Chalet",
     price: 2000,
+    type: "Villa",
+    roi: "15-18% IRR",
+    status: "Investment Open",
+    features: [
+      "Marine Wellness Hub",
+      "Backwater Access",
+      "Eco-Luxury Villas",
+      "3 Prime Locations",
+    ],
     image:
       "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=800&q=80",
   },
   {
     id: "mumbai-sea-link",
-    location: "Mumbai, India",
+    location: "las angeles, california",
     name: "Sea Link Towers",
     price: 6000,
+    type: "waterfront",
+    roi: "15-18% IRR",
+    status: "Investment Open",
+    features: [
+      "Marine Wellness Hub",
+      "Backwater Access",
+      "Eco-Luxury Villas",
+      "3 Prime Locations",
+    ],
     image:
       "https://images.unsplash.com/photo-1570168007204-dfb528c6958f?w=800&q=80",
   },
@@ -93,18 +169,49 @@ const benefits = [
   },
 ];
 
+const heroVideos = [video_1, video_2, video_3, video_4];
 const International = () => {
   const { formatAmount } = useCurrency();
+  const [activeType, setActiveType] = useState<string | null>(null);
   const [inquiryOpen, setInquiryOpen] = useState(false);
   const [selectedProperty, setSelectedProperty] = useState<{
     id: string;
     name: string;
   } | null>(null);
+  const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  const filteredProperties = properties.filter((p) => {
+    if (activeType && p.type !== activeType) return false;
+    return true;
+  });
+
+  const clearFilters = () => {
+    setActiveType(null);
+  };
 
   const handlePropertyClick = (property: { id: string; name: string }) => {
     setSelectedProperty(property);
     setInquiryOpen(true);
   };
+
+  const handleVideoEnd = () => {
+    setCurrentVideoIndex((prev) => (prev + 1) % heroVideos.length);
+  };
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (video) {
+      video.load();
+      video.play().catch(() => {
+        // autoplay might be blocked, ignore
+      });
+    }
+  }, [currentVideoIndex]);
+
+  const propertyTypes = useMemo(() => {
+    return Array.from(new Set(properties.map((p) => p.type)));
+  }, []);
 
   return (
     <div className="overflow-x-hidden bg-background">
@@ -119,9 +226,16 @@ const International = () => {
             alt="Dubai Skyline"
             className="w-full h-full object-cover"
           /> */}
-          <video autoPlay muted loop className="w-full h-full object-cover">
-            <source src={dubaiVideo} />
-            {/* <source src="/hero-mobile.mp4" media="(max-width: 767px)" /> */}
+          <video
+            ref={videoRef}
+            autoPlay
+            muted
+            playsInline
+            preload="auto"
+            onEnded={handleVideoEnd}
+            className="w-full h-full object-cover"
+          >
+            <source src={heroVideos[currentVideoIndex]} type="video/mp4" />
           </video>
         </div>
 
@@ -144,12 +258,11 @@ const International = () => {
               Tax-efficient returns.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 mt-6">
-              <Button variant="hero" size="lg">
-                Explore Listings
-              </Button>
-              <Button variant="heroOutline" size="lg">
-                Why UAE?
-              </Button>
+              <a href="#property">
+                <Button variant="hero" size="lg">
+                  Explore Listings
+                </Button>
+              </a>
             </div>
           </motion.div>
         </div>
@@ -198,54 +311,151 @@ const International = () => {
           </motion.div>
 
           {/* Lifestyle Filters */}
-          <div className="flex flex-wrap gap-3 mb-12">
+          <div className="flex flex-wrap gap-3 mb-5 items-center">
             <span className="text-muted-foreground text-sm mr-4">
               Explore by Lifestyle
             </span>
-            {["Downtown Views", "Waterfront", "Investment Yield"].map(
-              (filter) => (
-                <button
-                  key={filter}
-                  className="px-4 py-2 text-xs uppercase tracking-wider border border-border/30 text-foreground/80 hover:border-gold-accent hover:text-gold-accent transition-colors rounded"
-                >
-                  {filter}
-                </button>
-              )
-            )}
-          </div>
-
-          {/* Property Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {properties.map((property, idx) => (
-              <motion.div
-                key={property.name}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: idx * 0.1 }}
-                className="group cursor-pointer"
-                onClick={() =>
-                  handlePropertyClick({ id: property.id, name: property.name })
-                }
+            {propertyTypes.map((type) => (
+              <button
+                key={type}
+                onClick={() => setActiveType(activeType === type ? null : type)}
+                className={`px-5 py-2.5 text-xs font-bold uppercase tracking-wider rounded-sm transition-all ${
+                  activeType === type
+                    ? "bg-primary text-primary-foreground"
+                    : "border border-border text-muted-foreground hover:border-primary/50 hover:text-foreground"
+                }`}
               >
-                <div className="relative aspect-[3/4] overflow-hidden rounded mb-4">
-                  <img
-                    src={property.image}
-                    alt={property.name}
-                    className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                </div>
-                <span className="text-gold-accent/70 text-xs uppercase tracking-wider">
-                  {property.location}
-                </span>
-                <h3 className="text-white font-medium mt-1">{property.name}</h3>
-                <p className="text-muted-foreground text-sm mt-1">
-                  {formatAmount(property.price)}
-                </p>
-              </motion.div>
+                {type}
+              </button>
             ))}
           </div>
+          {/* Clear Filters */}
+          {activeType && (
+            <button
+              onClick={clearFilters}
+              className="text-sm text-muted-foreground hover:text-primary transition-colors w-fit flex items-center gap-2"
+            >
+              <span className="material-symbols-outlined text-base">close</span>
+              Clear all filters
+            </button>
+          )}
+          {/* Property Grid */}
+          <section id="property" className="px-4 mt-5">
+            <div className="max-w-[1280px] mx-auto">
+              <div className="flex items-center justify-between mb-8">
+                <p className="text-muted-foreground">
+                  Showing {filteredProperties.length} properties
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {filteredProperties.map((property, index) => (
+                  <motion.div
+                    key={property.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: index * 0.1 }}
+                  >
+                    <button
+                      onClick={() =>
+                        handlePropertyClick({
+                          id: property.id,
+                          name: property.name,
+                        })
+                      }
+                      className="group block overflow-hidden rounded-sm border border-border bg-card hover:border-primary/50 transition-all w-full text-left"
+                    >
+                      <div className="relative aspect-[4/3] overflow-hidden">
+                        <div
+                          className="w-full h-full bg-cover bg-center transform group-hover:scale-105 transition-transform duration-700"
+                          style={{ backgroundImage: `url(${property.image})` }}
+                        />
+                        <div className="absolute top-4 left-4 bg-primary text-primary-foreground text-xs font-bold px-3 py-1 rounded uppercase tracking-wide">
+                          {property.type}
+                        </div>
+                        {property.status && (
+                          <div className="absolute top-4 right-4 bg-gold text-gold-foreground text-xs font-bold px-3 py-1 rounded uppercase tracking-wide">
+                            {property.status}
+                          </div>
+                        )}
+                        {/* {property.hasVideo && (
+                          <div className="absolute bottom-4 right-4 bg-background/80 backdrop-blur-sm text-foreground text-xs font-bold px-3 py-1 rounded flex items-center gap-1">
+                            <span className="material-symbols-outlined text-sm">
+                              play_circle
+                            </span>
+                            Video
+                          </div>
+                        )} */}
+                      </div>
+                      <div className="p-6">
+                        <h3 className="text-xl font-light text-foreground group-hover:text-primary transition-colors">
+                          {property.name}
+                        </h3>
+                        <p className="text-sm text-muted-foreground mt-1 capitalize">
+                          {property.location.replace("-", " ")}
+                        </p>
+
+                        {/* Features */}
+                        {property.features && (
+                          <div className="mt-3 space-y-1">
+                            {property.features
+                              .slice(0, 3)
+                              .map((feature, idx) => (
+                                <div
+                                  key={idx}
+                                  className="flex items-center gap-2 text-xs text-foreground/70"
+                                >
+                                  <span className="material-symbols-outlined text-primary text-xs">
+                                    check_circle
+                                  </span>
+                                  {feature}
+                                </div>
+                              ))}
+                          </div>
+                        )}
+
+                        <div className="flex items-center gap-4 mt-4 pt-4 border-t border-border">
+                          <div>
+                            <p className="text-xs text-muted-foreground uppercase tracking-wide">
+                              Price
+                            </p>
+                            <p className="text-lg font-bold text-primary">
+                              {formatAmount(property.price)}
+                            </p>
+                          </div>
+                          {property.roi && (
+                            <>
+                              <div className="h-8 w-px bg-border" />
+                              <div>
+                                <p className="text-xs text-muted-foreground uppercase tracking-wide">
+                                  Returns
+                                </p>
+                                <p className="text-sm font-medium text-gold">
+                                  {property.roi}
+                                </p>
+                              </div>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                    </button>
+                  </motion.div>
+                ))}
+              </div>
+
+              {filteredProperties.length === 0 && (
+                <div className="text-center py-20">
+                  <span className="material-symbols-outlined text-5xl text-muted-foreground/50">
+                    search_off
+                  </span>
+                  <p className="text-muted-foreground mt-4">
+                    No properties match your filters. Try adjusting your
+                    selection.
+                  </p>
+                </div>
+              )}
+            </div>
+          </section>
         </div>
       </section>
 
@@ -351,7 +561,7 @@ const International = () => {
           style={{ filter: "brightness(0.2)" }}
         />
         <div className="relative z-10 max-w-3xl mx-auto text-center flex flex-col items-center gap-8">
-          <DiamondIcon className="w-12 h-12 text-gold-accent" />
+          <DiamondIcon className="text-gold-accent" />
           <h2 className="text-3xl md:text-5xl font-light text-white leading-tight">
             Secure your piece of the <br />
             <span className="font-serif italic text-gold-accent">
@@ -363,12 +573,11 @@ const International = () => {
             discuss your portfolio goals.
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
-            <Button variant="hero" size="lg">
-              Book Consultation
-            </Button>
-            <Button variant="heroOutline" size="lg">
-              Download Market Report
-            </Button>
+            <Link to="/calendar">
+              <Button variant="hero" size="lg">
+                Book Consultation
+              </Button>
+            </Link>
           </div>
         </div>
       </section>

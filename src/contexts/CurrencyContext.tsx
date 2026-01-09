@@ -41,7 +41,6 @@ export const CurrencyProvider = ({ children }: { children: ReactNode }) => {
     USD: 1,
     AED: 1,
   });
-  
 
   // ✅ LIVE RATE FETCH (INR BASE)
   const fetchRates = async () => {

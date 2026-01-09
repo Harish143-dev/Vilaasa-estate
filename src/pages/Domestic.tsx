@@ -5,8 +5,23 @@ import { Footer } from "@/components/Footer";
 import domesticHero from "@/assets/domestic-hero.jpg";
 import heritageVilla from "@/assets/heritage-villa.jpg";
 import spaWellness from "@/assets/spa-wellness.jpg";
+import { useRef } from "react";
+import { useState } from "react";
+import video_1 from "../../public/domesticVideos/video_1.mp4";
+import video_2 from "../../public/domesticVideos/video_2.mp4";
+import video_3 from "../../public/domesticVideos/video_3.mp4";
+import video_4 from "../../public/domesticVideos/video_4.mp4";
+import video_5 from "../../public/domesticVideos/video_5.mp4";
 
 const Domestic = () => {
+  const domesticHeroVideo = [video_1, video_2, video_3, video_4, video_5];
+  const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  const handleVideoEnd = () => {
+    const nextIndex = (currentVideoIndex + 1) % domesticHeroVideo.length;
+    setCurrentVideoIndex(nextIndex);
+  };
   return (
     <div className="overflow-x-hidden">
       <Navbar />
@@ -15,10 +30,25 @@ const Domestic = () => {
       <header className="relative flex min-h-screen w-full flex-col justify-center items-center overflow-hidden">
         <div className="absolute inset-0 z-0">
           <div className="absolute inset-0 gradient-overlay z-10" />
-          <div
+          {/* <div
             className="w-full h-full bg-cover bg-center bg-no-repeat"
             style={{ backgroundImage: `url(${domesticHero})` }}
-          />
+          /> */}
+
+          <video
+            ref={videoRef}
+            key={currentVideoIndex}
+            autoPlay
+            muted
+            playsInline
+            onEnded={handleVideoEnd}
+            className="w-full h-full object-cover"
+          >
+            <source
+              src={domesticHeroVideo[currentVideoIndex]}
+              type="video/mp4"
+            />
+          </video>
         </div>
 
         <div className="relative z-20 px-4 max-w-[1280px] flex flex-col items-center text-center">
@@ -68,7 +98,9 @@ const Domestic = () => {
           >
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-light text-foreground leading-[1.1]">
               Choose Your{" "}
-              <span className="font-serif italic text-primary">Investment Path</span>
+              <span className="font-serif italic text-primary">
+                Investment Path
+              </span>
             </h2>
             <p className="text-muted-foreground text-lg mt-4 max-w-2xl mx-auto">
               Two distinct avenues for building wealth and legacy in India
@@ -93,7 +125,7 @@ const Domestic = () => {
                     style={{ backgroundImage: `url(${heritageVilla})` }}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" />
-                  
+
                   {/* Content overlay */}
                   <div className="absolute bottom-0 left-0 right-0 p-8">
                     <span className="text-primary text-xs font-bold uppercase tracking-[0.2em] mb-3 block">
@@ -106,7 +138,8 @@ const Domestic = () => {
                       </span>
                     </h3>
                     <p className="text-foreground/70 text-base leading-relaxed mb-4 max-w-md">
-                      From ancestral villas to skyline apartments across India. Homes that serve as a legacy.
+                      From ancestral villas to skyline apartments across India.
+                      Homes that serve as a legacy.
                     </p>
                     <div className="flex items-center gap-2 text-primary group-hover:gap-4 transition-all font-bold uppercase tracking-widest text-xs">
                       View Properties
@@ -136,7 +169,7 @@ const Domestic = () => {
                     style={{ backgroundImage: `url(${spaWellness})` }}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" />
-                  
+
                   {/* Content overlay */}
                   <div className="absolute bottom-0 left-0 right-0 p-8">
                     <span className="text-gold text-xs font-bold uppercase tracking-[0.2em] mb-3 block">
@@ -149,7 +182,8 @@ const Domestic = () => {
                       </span>
                     </h3>
                     <p className="text-foreground/70 text-base leading-relaxed mb-4 max-w-md">
-                      Master Franchise rights for premier wellness, resort, and lifestyle brands.
+                      Master Franchise rights for premier wellness, resort, and
+                      lifestyle brands.
                     </p>
                     <div className="flex items-center gap-2 text-gold group-hover:gap-4 transition-all font-bold uppercase tracking-widest text-xs">
                       View Opportunities

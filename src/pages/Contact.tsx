@@ -4,6 +4,7 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { CountryCodeSelect } from "@/components/CountryCodeSelect";
 
 const interestOptions = [
   { id: "india", icon: "temple_hindu", label: "India Estate" },
@@ -24,6 +25,7 @@ const Contact = () => {
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
+    phoneCountryCode: "+91",
     interests: [] as string[],
     budget: "",
   });
@@ -40,7 +42,7 @@ const Contact = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!formData.name.trim() || !formData.phone.trim()) {
       toast({
         title: "Please fill in required fields",
@@ -51,16 +53,22 @@ const Contact = () => {
     }
 
     setIsSubmitting(true);
-    
+
     // Simulate form submission
     await new Promise((resolve) => setTimeout(resolve, 1500));
-    
+
     toast({
       title: "Inquiry Submitted",
       description: "A relationship manager will contact you within 24 hours.",
     });
-    
-    setFormData({ name: "", phone: "", interests: [], budget: "" });
+
+    setFormData({
+      name: "",
+      phone: "",
+      interests: [],
+      budget: "",
+      phoneCountryCode: "+91",
+    });
     setIsSubmitting(false);
   };
 
@@ -82,7 +90,8 @@ const Contact = () => {
               <span className="italic text-primary">Portfolio.</span>
             </h1>
             <p className="text-muted-foreground text-lg">
-              Whether you are looking to acquire a home or expand a business, our team is ready.
+              Whether you are looking to acquire a home or expand a business,
+              our team is ready.
             </p>
           </motion.div>
         </div>
@@ -100,22 +109,35 @@ const Contact = () => {
           >
             {/* Direct Line */}
             <div className="flex flex-col gap-3">
-              <span className="text-muted-foreground text-xs uppercase tracking-widest">Direct Line</span>
-              <a href="tel:04443570713" className="text-3xl md:text-4xl font-light text-foreground hover:text-primary transition-colors">
+              <span className="text-muted-foreground text-xs uppercase tracking-widest">
+                Direct Line
+              </span>
+              <a
+                href="tel:04443570713"
+                className="text-3xl md:text-4xl font-light text-foreground hover:text-primary transition-colors"
+              >
                 044 4357 0713
               </a>
-              <p className="text-muted-foreground text-sm">Available Mon-Sat, 9:00 AM — 7:00 PM IST</p>
+              <p className="text-muted-foreground text-sm">
+                Available Mon-Sat, 9:00 AM — 7:00 PM IST
+              </p>
             </div>
 
             {/* Office Locations */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {/* Chennai */}
               <div className="p-6 bg-card rounded-lg border border-border">
-                <span className="text-primary text-xs uppercase tracking-widest font-bold">Chennai, India</span>
-                <h3 className="text-foreground font-medium mt-3 mb-2">Vilaasa Headquarters</h3>
+                <span className="text-primary text-xs uppercase tracking-widest font-bold">
+                  Chennai, India
+                </span>
+                <h3 className="text-foreground font-medium mt-3 mb-2">
+                  Vilaasa Headquarters
+                </h3>
                 <p className="text-muted-foreground text-sm leading-relaxed">
-                  43, 2nd Cross Street, 2nd Main Road<br />
-                  Navarathna Garden, Defence Colony<br />
+                  43, 2nd Cross Street, 2nd Main Road
+                  <br />
+                  Navarathna Garden, Defence Colony
+                  <br />
                   Ekkatuthangal, Chennai 600032
                 </p>
                 <a
@@ -125,16 +147,23 @@ const Contact = () => {
                   className="inline-flex items-center gap-1 text-primary text-sm mt-4 hover:underline"
                 >
                   Get Directions
-                  <span className="material-symbols-outlined text-sm">north_east</span>
+                  <span className="material-symbols-outlined text-sm">
+                    north_east
+                  </span>
                 </a>
               </div>
 
               {/* Dubai */}
               <div className="p-6 bg-card rounded-lg border border-border">
-                <span className="text-gold-accent text-xs uppercase tracking-widest font-bold">Dubai, UAE</span>
-                <h3 className="text-foreground font-medium mt-3 mb-2">The Opus by Zaha Hadid</h3>
+                <span className="text-gold-accent text-xs uppercase tracking-widest font-bold">
+                  Dubai, UAE
+                </span>
+                <h3 className="text-foreground font-medium mt-3 mb-2">
+                  The Opus by Zaha Hadid
+                </h3>
                 <p className="text-muted-foreground text-sm leading-relaxed">
-                  Al A'amal St, Business Bay<br />
+                  Al A'amal St, Business Bay
+                  <br />
                   Dubai, United Arab Emirates
                 </p>
                 <a
@@ -144,16 +173,23 @@ const Contact = () => {
                   className="inline-flex items-center gap-1 text-gold-accent text-sm mt-4 hover:underline"
                 >
                   Get Directions
-                  <span className="material-symbols-outlined text-sm">north_east</span>
+                  <span className="material-symbols-outlined text-sm">
+                    north_east
+                  </span>
                 </a>
               </div>
             </div>
 
             {/* Email */}
             <div className="flex flex-col gap-2">
-              <span className="text-muted-foreground text-xs uppercase tracking-widest">General Inquiries</span>
-              <a href="mailto:concierge@vilaasaestate.com" className="text-primary text-lg hover:underline">
-                concierge@vilaasaestate.com
+              <span className="text-muted-foreground text-xs uppercase tracking-widest">
+                General Inquiries
+              </span>
+              <a
+                href="mailto:concierge@vilaasaestate.com"
+                className="text-primary text-lg hover:underline"
+              >
+                info@vilaasaestates.com
               </a>
             </div>
           </motion.div>
@@ -165,22 +201,30 @@ const Contact = () => {
             viewport={{ once: true }}
             className="bg-card p-8 md:p-10 rounded-lg border border-border"
           >
-            <h2 className="text-2xl font-light text-foreground mb-2">Request a Callback</h2>
+            <h2 className="text-2xl font-light text-foreground mb-2">
+              Request a Callback
+            </h2>
             <p className="text-muted-foreground text-sm mb-8">
-              Please provide your details below. A dedicated relationship manager will contact you within 24 hours.
+              Please provide your details below. A dedicated relationship
+              manager will contact you within 24 hours.
             </p>
 
             <form onSubmit={handleSubmit} className="flex flex-col gap-6">
               {/* Name */}
               <div className="flex flex-col gap-2">
-                <label htmlFor="name" className="text-foreground text-sm font-medium">
+                <label
+                  htmlFor="name"
+                  className="text-foreground text-sm font-medium"
+                >
                   Full Name
                 </label>
                 <input
                   id="name"
                   type="text"
                   value={formData.name}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, name: e.target.value }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({ ...prev, name: e.target.value }))
+                  }
                   className="bg-background border border-border rounded px-4 py-3 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-colors"
                   placeholder="Your full name"
                   maxLength={100}
@@ -189,23 +233,44 @@ const Contact = () => {
 
               {/* Phone */}
               <div className="flex flex-col gap-2">
-                <label htmlFor="phone" className="text-foreground text-sm font-medium">
+                <label
+                  htmlFor="phone"
+                  className="text-foreground text-sm font-medium"
+                >
                   Phone Number
                 </label>
-                <input
-                  id="phone"
-                  type="tel"
-                  value={formData.phone}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, phone: e.target.value }))}
-                  className="bg-background border border-border rounded px-4 py-3 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-colors"
-                  placeholder="+1 (555) 000-0000"
-                  maxLength={20}
-                />
+                <div className="flex gap-2 w-full items-center">
+                  <CountryCodeSelect
+                    value={formData.phoneCountryCode}
+                    onChange={(code) =>
+                      setFormData({
+                        ...formData,
+                        phoneCountryCode: code,
+                      })
+                    }
+                  />
+                  <input
+                    id="phone"
+                    type="tel"
+                    value={formData.phone}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        phone: e.target.value,
+                      }))
+                    }
+                    className="bg-background border border-border w-full rounded px-4 py-3 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-colors"
+                    placeholder="000-0000"
+                    maxLength={20}
+                  />
+                </div>
               </div>
 
               {/* Interest Selection */}
               <div className="flex flex-col gap-3">
-                <label className="text-foreground text-sm font-medium">I am interested in</label>
+                <label className="text-foreground text-sm font-medium">
+                  I am interested in
+                </label>
                 <div className="grid grid-cols-3 gap-3">
                   {interestOptions.map((option) => (
                     <button
@@ -218,8 +283,12 @@ const Contact = () => {
                           : "border-border text-muted-foreground hover:border-primary/50 hover:text-foreground"
                       }`}
                     >
-                      <span className="material-symbols-outlined text-2xl">{option.icon}</span>
-                      <span className="text-xs font-medium">{option.label}</span>
+                      <span className="material-symbols-outlined text-2xl">
+                        {option.icon}
+                      </span>
+                      <span className="text-xs font-medium">
+                        {option.label}
+                      </span>
                     </button>
                   ))}
                 </div>
@@ -227,14 +296,22 @@ const Contact = () => {
 
               {/* Budget */}
               <div className="flex flex-col gap-2">
-                <label htmlFor="budget" className="text-foreground text-sm font-medium">
+                <label
+                  htmlFor="budget"
+                  className="text-foreground text-sm font-medium"
+                >
                   Estimated Budget (USD)
                 </label>
                 <div className="relative">
                   <select
                     id="budget"
                     value={formData.budget}
-                    onChange={(e) => setFormData((prev) => ({ ...prev, budget: e.target.value }))}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        budget: e.target.value,
+                      }))
+                    }
                     className="w-full bg-background border border-border rounded px-4 py-3 text-foreground appearance-none focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-colors cursor-pointer"
                   >
                     {budgetOptions.map((option) => (

@@ -1,41 +1,21 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { InquiryFormDialog } from "@/components/InquiryFormDialog";
 import heritageVilla from "@/assets/heritage-villa.jpg";
-
-type PropertyType = "villa" | "apartment" | "plot" | "land" | "elements" | "resort" | "farmland";
-type Location = "chennai" | "goa" | "mumbai" | "bangalore" | "kerala" | "ongole" | "hyderabad" | "pulicat";
+import { useCurrency } from "@/contexts/CurrencyContext";
 
 const DomesticRealEstate = () => {
-  const [activeType, setActiveType] = useState<PropertyType | null>(null);
-  const [activeLocation, setActiveLocation] = useState<Location | null>(null);
+  const [activeType, setActiveType] = useState<string | null>(null);
+  const [activeLocation, setActiveLocation] = useState<string | null>(null);
   const [inquiryOpen, setInquiryOpen] = useState(false);
-  const [selectedProperty, setSelectedProperty] = useState<{ id: string; name: string } | null>(null);
-
-  const propertyTypes: { id: PropertyType; label: string }[] = [
-    { id: "villa", label: "Villa" },
-    { id: "apartment", label: "Apartment" },
-    { id: "plot", label: "Plot" },
-    { id: "land", label: "Land" },
-    { id: "farmland", label: "Farm Land" },
-    { id: "resort", label: "Resort" },
-    { id: "elements", label: "Elements" },
-  ];
-
-  const locations: { id: Location; label: string }[] = [
-    { id: "chennai", label: "Chennai" },
-    { id: "goa", label: "Goa" },
-    { id: "mumbai", label: "Mumbai" },
-    { id: "bangalore", label: "Bangalore" },
-    { id: "kerala", label: "Kerala" },
-    { id: "ongole", label: "Ongole" },
-    { id: "hyderabad", label: "Hyderabad" },
-    { id: "pulicat", label: "Pulicat" },
-  ];
-
+  const [selectedProperty, setSelectedProperty] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
+  const { formatAmount } = useCurrency();
   // Properties catalog
   const properties = [
     {
@@ -43,44 +23,68 @@ const DomesticRealEstate = () => {
       name: "Krillam Marine Wellness Resorts",
       location: "kerala",
       type: "resort",
-      price: "₹15L onwards",
+      price: 5000000,
       roi: "15-18% IRR",
-      image: "https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=800&q=80",
+      image:
+        "https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=800&q=80",
       status: "Investment Open",
-      features: ["Marine Wellness Hub", "Backwater Access", "Eco-Luxury Villas", "3 Prime Locations"],
+      features: [
+        "Marine Wellness Hub",
+        "Backwater Access",
+        "Eco-Luxury Villas",
+        "3 Prime Locations",
+      ],
     },
     {
       id: "chaturvatika-villas",
       name: "Chaturvatika Luxury Villas",
       location: "ongole",
       type: "villa",
-      price: "₹1.2 Cr onwards",
+      price: 50000000,
       roi: "Premium Appreciation",
-      image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&q=80",
+      image:
+        "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&q=80",
       status: "97 Villas Left",
-      features: ["3, 4 & 5 BHK Villas", "25 Acre Township", "Smart Home Integration", "Wellness by Tattva"],
+      features: [
+        "3, 4 & 5 BHK Villas",
+        "25 Acre Township",
+        "Smart Home Integration",
+        "Wellness by Tattva",
+      ],
     },
     {
       id: "flamingo-villas-pulicat",
       name: "Flamingo Villas",
       location: "pulicat",
       type: "villa",
-      price: "₹85L onwards",
+      price: 8000000,
       roi: "20-Year Lease-Back",
-      image: "https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=800&q=80",
+      image:
+        "https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=800&q=80",
       status: "40 Premium Villas",
-      features: ["70 km from Chennai", "Marine Wellness", "Flamingo Habitat", "Assured Returns"],
+      features: [
+        "70 km from Chennai",
+        "Marine Wellness",
+        "Flamingo Habitat",
+        "Assured Returns",
+      ],
     },
     {
       id: "oxygen-forest-hyderabad",
       name: "Oxygen Forest (Pranavayu Vanam)",
       location: "hyderabad",
       type: "farmland",
-      price: "₹49L onwards",
+      price: 51000000,
       roi: "Smart Green Investment",
-      image: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800&q=80",
+      image:
+        "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=800&q=80",
       status: "160-Acre Gated Community",
-      features: ["3630 & 2057 Sq Yards", "450+ Trees per Unit", "Organic Farm Produce", "25,000-Acre Forest Border"],
+      features: [
+        "3630 & 2057 Sq Yards",
+        "450+ Trees per Unit",
+        "Organic Farm Produce",
+        "25,000-Acre Forest Border",
+      ],
       hasVideo: true,
     },
     {
@@ -88,16 +92,20 @@ const DomesticRealEstate = () => {
       name: "Heritage Villa",
       location: "chennai",
       type: "villa",
-      price: "₹4.5 Cr",
+      price: 8000000,
       image: heritageVilla,
-      features: ["4 BHK + Pooja Room", "Heritage Architecture", "6,000 Sq. Ft. Plot"],
+      features: [
+        "4 BHK + Pooja Room",
+        "Heritage Architecture",
+        "6,000 Sq. Ft. Plot",
+      ],
     },
     {
       id: "sea-view-apartment",
       name: "Sea View Apartment",
       location: "goa",
       type: "apartment",
-      price: "₹2.8 Cr",
+      price: 9000000,
       image: heritageVilla,
       features: ["3 BHK Sea Facing", "Premium High-Rise", "Infinity Pool"],
     },
@@ -106,7 +114,7 @@ const DomesticRealEstate = () => {
       name: "Premium Plot",
       location: "mumbai",
       type: "plot",
-      price: "₹1.2 Cr",
+      price: 5000000,
       image: heritageVilla,
       features: ["2,400 Sq. Ft.", "Metro Corridor", "NA Converted"],
     },
@@ -115,7 +123,7 @@ const DomesticRealEstate = () => {
       name: "Luxury Villa",
       location: "goa",
       type: "villa",
-      price: "₹6.5 Cr",
+      price: 5000000,
       image: heritageVilla,
       features: ["5 BHK + Staff", "Private Pool", "12,000 Sq. Ft. Plot"],
     },
@@ -136,6 +144,13 @@ const DomesticRealEstate = () => {
     setSelectedProperty(property);
     setInquiryOpen(true);
   };
+
+  const propertyTypes = useMemo(() => {
+    return Array.from(new Set(properties.map((p) => p.type)));
+  }, []);
+  const propertyLocations = useMemo(() => {
+    return Array.from(new Set(properties.map((p) => p.location)));
+  }, []);
 
   return (
     <div className="overflow-x-hidden">
@@ -162,7 +177,9 @@ const DomesticRealEstate = () => {
               to="/domestic"
               className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors text-sm"
             >
-              <span className="material-symbols-outlined text-base">arrow_back</span>
+              <span className="material-symbols-outlined text-base">
+                arrow_back
+              </span>
               Back to Domestic
             </Link>
 
@@ -189,15 +206,17 @@ const DomesticRealEstate = () => {
               <div className="flex flex-wrap gap-3">
                 {propertyTypes.map((type) => (
                   <button
-                    key={type.id}
-                    onClick={() => setActiveType(activeType === type.id ? null : type.id)}
+                    key={type}
+                    onClick={() =>
+                      setActiveType(activeType === type ? null : type)
+                    }
                     className={`px-5 py-2.5 text-xs font-bold uppercase tracking-wider rounded-sm transition-all ${
-                      activeType === type.id
+                      activeType === type
                         ? "bg-primary text-primary-foreground"
                         : "border border-border text-muted-foreground hover:border-primary/50 hover:text-foreground"
                     }`}
                   >
-                    {type.label}
+                    {type}
                   </button>
                 ))}
               </div>
@@ -209,17 +228,19 @@ const DomesticRealEstate = () => {
                 Location
               </h3>
               <div className="flex flex-wrap gap-3">
-                {locations.map((loc) => (
+                {propertyLocations.map((loc) => (
                   <button
-                    key={loc.id}
-                    onClick={() => setActiveLocation(activeLocation === loc.id ? null : loc.id)}
+                    key={loc}
+                    onClick={() =>
+                      setActiveLocation(activeLocation === loc ? null : loc)
+                    }
                     className={`px-5 py-2.5 text-xs font-bold uppercase tracking-wider rounded-sm transition-all ${
-                      activeLocation === loc.id
+                      activeLocation === loc
                         ? "bg-primary text-primary-foreground"
                         : "border border-border text-muted-foreground hover:border-primary/50 hover:text-foreground"
                     }`}
                   >
-                    {loc.label}
+                    {loc}
                   </button>
                 ))}
               </div>
@@ -231,7 +252,9 @@ const DomesticRealEstate = () => {
                 onClick={clearFilters}
                 className="text-sm text-muted-foreground hover:text-primary transition-colors w-fit flex items-center gap-2"
               >
-                <span className="material-symbols-outlined text-base">close</span>
+                <span className="material-symbols-outlined text-base">
+                  close
+                </span>
                 Clear all filters
               </button>
             )}
@@ -257,7 +280,12 @@ const DomesticRealEstate = () => {
                 transition={{ duration: 0.5, delay: index * 0.1 }}
               >
                 <button
-                  onClick={() => handlePropertyClick({ id: property.id, name: property.name })}
+                  onClick={() =>
+                    handlePropertyClick({
+                      id: property.id,
+                      name: property.name,
+                    })
+                  }
                   className="group block overflow-hidden rounded-sm border border-border bg-card hover:border-primary/50 transition-all w-full text-left"
                 >
                   <div className="relative aspect-[4/3] overflow-hidden">
@@ -275,7 +303,9 @@ const DomesticRealEstate = () => {
                     )}
                     {property.hasVideo && (
                       <div className="absolute bottom-4 right-4 bg-background/80 backdrop-blur-sm text-foreground text-xs font-bold px-3 py-1 rounded flex items-center gap-1">
-                        <span className="material-symbols-outlined text-sm">play_circle</span>
+                        <span className="material-symbols-outlined text-sm">
+                          play_circle
+                        </span>
                         Video
                       </div>
                     )}
@@ -287,30 +317,43 @@ const DomesticRealEstate = () => {
                     <p className="text-sm text-muted-foreground mt-1 capitalize">
                       {property.location.replace("-", " ")}
                     </p>
-                    
+
                     {/* Features */}
                     {property.features && (
                       <div className="mt-3 space-y-1">
                         {property.features.slice(0, 3).map((feature, idx) => (
-                          <div key={idx} className="flex items-center gap-2 text-xs text-foreground/70">
-                            <span className="material-symbols-outlined text-primary text-xs">check_circle</span>
+                          <div
+                            key={idx}
+                            className="flex items-center gap-2 text-xs text-foreground/70"
+                          >
+                            <span className="material-symbols-outlined text-primary text-xs">
+                              check_circle
+                            </span>
                             {feature}
                           </div>
                         ))}
                       </div>
                     )}
-                    
+
                     <div className="flex items-center gap-4 mt-4 pt-4 border-t border-border">
                       <div>
-                        <p className="text-xs text-muted-foreground uppercase tracking-wide">Price</p>
-                        <p className="text-lg font-bold text-primary">{property.price}</p>
+                        <p className="text-xs text-muted-foreground uppercase tracking-wide">
+                          Price
+                        </p>
+                        <p className="text-lg font-bold text-primary">
+                          {`${formatAmount(property.price)}${" "}Onwards`}
+                        </p>
                       </div>
                       {property.roi && (
                         <>
                           <div className="h-8 w-px bg-border" />
                           <div>
-                            <p className="text-xs text-muted-foreground uppercase tracking-wide">Returns</p>
-                            <p className="text-sm font-medium text-gold">{property.roi}</p>
+                            <p className="text-xs text-muted-foreground uppercase tracking-wide">
+                              Returns
+                            </p>
+                            <p className="text-sm font-medium text-gold">
+                              {property.roi}
+                            </p>
                           </div>
                         </>
                       )}

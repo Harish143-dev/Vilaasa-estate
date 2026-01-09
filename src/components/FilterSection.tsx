@@ -33,35 +33,7 @@ export const FilterSection = () => {
             </p>
           </div>
 
-          <div className="flex flex-col gap-6 pt-4">
-            <h3 className="text-xs font-bold text-foreground uppercase tracking-widest border-b border-border pb-2 w-fit">
-              Quick Links
-            </h3>
-            <div className="flex flex-col sm:flex-row gap-6">
-              <a
-                href="#"
-                className="group flex items-center gap-2 text-foreground/80 hover:text-primary transition-colors"
-              >
-                <span className="material-symbols-outlined text-xl text-primary/70 group-hover:text-primary transition-colors">
-                  temple_hindu
-                </span>
-                <span className="font-medium text-sm tracking-wide border-b border-transparent group-hover:border-primary/50 transition-all">
-                  View Indian Portfolio
-                </span>
-              </a>
-              <a
-                href="#"
-                className="group flex items-center gap-2 text-foreground/80 hover:text-primary transition-colors"
-              >
-                <span className="material-symbols-outlined text-xl text-primary/70 group-hover:text-primary transition-colors">
-                  location_city
-                </span>
-                <span className="font-medium text-sm tracking-wide border-b border-transparent group-hover:border-primary/50 transition-all">
-                  View Dubai Portfolio
-                </span>
-              </a>
-            </div>
-          </div>
+          
         </motion.div>
 
         {/* Image */}

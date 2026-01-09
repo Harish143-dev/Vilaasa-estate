@@ -13,7 +13,7 @@ export const CurrencyToggle = () => {
     <div className="flex items-center bg-muted/50 rounded-full p-0.5 border border-border/50">
       {currencies.map((curr) => (
         <button
-          key={curr.value}  
+          key={curr.value}
           onClick={() => setCurrency(curr.value)}
           className={`px-2.5 py-1 rounded-full text-xs font-medium transition-all ${
             currency === curr.value

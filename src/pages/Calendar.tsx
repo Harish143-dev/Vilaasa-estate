@@ -14,6 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
+import { CountryCodeSelect } from "@/components/CountryCodeSelect";
 
 const timeSlots = [
   "09:00 AM",
@@ -42,14 +43,21 @@ const Calendar_Page = () => {
     name: "",
     email: "",
     phone: "",
+    phoneCountryCode: "+91",
     notes: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!selectedDate || !selectedTime || !visitType || !formData.name || !formData.phone) {
+
+    if (
+      !selectedDate ||
+      !selectedTime ||
+      !visitType ||
+      !formData.name ||
+      !formData.phone
+    ) {
       toast({
         title: "Missing Information",
         description: "Please fill in all required fields.",
@@ -59,23 +67,23 @@ const Calendar_Page = () => {
     }
 
     // Validate phone
-    const phoneRegex = /^[0-9]{10}$/;
-    if (!phoneRegex.test(formData.phone.replace(/\s/g, ""))) {
-      toast({
-        title: "Invalid Phone Number",
-        description: "Please enter a valid 10-digit phone number.",
-        variant: "destructive",
-      });
-      return;
-    }
+    // const phoneRegex = /^[0-9]{10}$/;
+    // if (!phoneRegex.test(formData.phone.replace(/\s/g, ""))) {
+    //   toast({
+    //     title: "Invalid Phone Number",
+    //     description: "Please enter a valid 10-digit phone number.",
+    //     variant: "destructive",
+    //   });
+    //   return;
+    // }
 
     setIsSubmitting(true);
-    
+
     // Simulate booking submission
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+
     setIsSubmitting(false);
-    
+
     toast({
       title: "Booking Confirmed!",
       description: `Your site visit is scheduled for ${selectedDate.toLocaleDateString()} at ${selectedTime}. You'll receive a calendar invite shortly.`,
@@ -85,7 +93,15 @@ const Calendar_Page = () => {
     setSelectedDate(undefined);
     setSelectedTime("");
     setVisitType("");
-    setFormData({ name: "", email: "", phone: "", notes: "" });
+    setFormData({
+      name: "",
+      email: "",
+      phone: "",
+      notes: "",
+      phoneCountryCode: "+91",
+    });
+
+   
   };
 
   // Disable past dates and weekends
@@ -98,7 +114,7 @@ const Calendar_Page = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      
+
       <main className="pt-32 pb-20 px-4 md:px-10">
         <div className="max-w-[1280px] mx-auto">
           {/* Hero */}
@@ -115,7 +131,7 @@ const Calendar_Page = () => {
               Book Your <span className="font-serif italic">Site Visit</span>
             </h1>
             <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-              Select your preferred date and time for a personalized walkthrough 
+              Select your preferred date and time for a personalized walkthrough
               of our exclusive properties and franchise opportunities.
             </p>
           </motion.div>
@@ -131,7 +147,7 @@ const Calendar_Page = () => {
               <h2 className="text-xl font-bold text-foreground mb-6">
                 Select Date & Time
               </h2>
-              
+
               <div className="flex flex-col items-center">
                 <Calendar
                   mode="single"
@@ -140,7 +156,7 @@ const Calendar_Page = () => {
                   disabled={disabledDays}
                   className="rounded-md border border-border pointer-events-auto"
                 />
-                
+
                 {selectedDate && (
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
@@ -148,7 +164,12 @@ const Calendar_Page = () => {
                     className="w-full mt-8"
                   >
                     <h3 className="text-sm font-medium text-foreground mb-4">
-                      Available Time Slots for {selectedDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
+                      Available Time Slots for{" "}
+                      {selectedDate.toLocaleDateString("en-US", {
+                        weekday: "long",
+                        month: "long",
+                        day: "numeric",
+                      })}
                     </h3>
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                       {timeSlots.map((time) => (
@@ -171,11 +192,16 @@ const Calendar_Page = () => {
 
               {/* Google Calendar Note */}
               <div className="mt-8 p-4 bg-primary/5 rounded-lg flex items-start gap-3">
-                <span className="material-symbols-outlined text-primary">event</span>
+                <span className="material-symbols-outlined text-primary">
+                  event
+                </span>
                 <div>
-                  <p className="text-sm font-medium text-foreground">Google Calendar Integration</p>
+                  <p className="text-sm font-medium text-foreground">
+                    Google Calendar Integration
+                  </p>
                   <p className="text-xs text-muted-foreground mt-1">
-                    Once confirmed, you'll receive a Google Calendar invite with meeting details and location.
+                    Once confirmed, you'll receive a Google Calendar invite with
+                    meeting details and location.
                   </p>
                 </div>
               </div>
@@ -191,7 +217,7 @@ const Calendar_Page = () => {
               <h2 className="text-xl font-bold text-foreground mb-6">
                 Your Details
               </h2>
-              
+
               <form onSubmit={handleSubmit} className="space-y-5">
                 <div className="space-y-2">
                   <Label htmlFor="visitType">Type of Visit *</Label>
@@ -215,7 +241,9 @@ const Calendar_Page = () => {
                     id="calName"
                     placeholder="Enter your full name"
                     value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, name: e.target.value })
+                    }
                     className="bg-background border-border"
                   />
                 </div>
@@ -227,21 +255,36 @@ const Calendar_Page = () => {
                     type="email"
                     placeholder="your@email.com"
                     value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, email: e.target.value })
+                    }
                     className="bg-background border-border"
                   />
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="calPhone">Phone Number *</Label>
-                  <Input
-                    id="calPhone"
-                    type="tel"
-                    placeholder="10-digit mobile number"
-                    value={formData.phone}
-                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    className="bg-background border-border"
-                  />
+                  <div className="flex gap-2 items-center">
+                    <CountryCodeSelect
+                      value={formData.phoneCountryCode}
+                      onChange={(code) =>
+                        setFormData({
+                          ...formData,
+                          phoneCountryCode: code,
+                        })
+                      }
+                    />
+                    <Input
+                      id="calPhone"
+                      type="tel"
+                      placeholder="0000-0000"
+                      value={formData.phone}
+                      onChange={(e) =>
+                        setFormData({ ...formData, phone: e.target.value })
+                      }
+                      className="bg-background border-border"
+                    />
+                  </div>
                 </div>
 
                 <div className="space-y-2">
@@ -250,7 +293,9 @@ const Calendar_Page = () => {
                     id="calNotes"
                     placeholder="Any specific requirements or questions"
                     value={formData.notes}
-                    onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, notes: e.target.value })
+                    }
                     className="bg-background border-border"
                   />
                 </div>
@@ -262,9 +307,17 @@ const Calendar_Page = () => {
                     animate={{ opacity: 1 }}
                     className="p-4 bg-primary/10 rounded-lg"
                   >
-                    <p className="text-sm font-medium text-foreground">Booking Summary</p>
+                    <p className="text-sm font-medium text-foreground">
+                      Booking Summary
+                    </p>
                     <p className="text-sm text-muted-foreground mt-1">
-                      {selectedDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })} at {selectedTime}
+                      {selectedDate.toLocaleDateString("en-US", {
+                        weekday: "long",
+                        month: "long",
+                        day: "numeric",
+                        year: "numeric",
+                      })}{" "}
+                      at {selectedTime}
                     </p>
                   </motion.div>
                 )}
@@ -276,12 +329,16 @@ const Calendar_Page = () => {
                 >
                   {isSubmitting ? (
                     <>
-                      <span className="material-symbols-outlined animate-spin mr-2">progress_activity</span>
+                      <span className="material-symbols-outlined animate-spin mr-2">
+                        progress_activity
+                      </span>
                       Booking...
                     </>
                   ) : (
                     <>
-                      <span className="material-symbols-outlined mr-2">event_available</span>
+                      <span className="material-symbols-outlined mr-2">
+                        event_available
+                      </span>
                       Confirm Booking
                     </>
                   )}

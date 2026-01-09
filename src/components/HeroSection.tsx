@@ -22,6 +22,8 @@ const partners = [
 const heroVideos = [
   "/videos/hero-video.mp4",
   "/videos/hero-video-2.mp4",
+  "/videos/hero-video-3.mp4",
+  "/videos/hero-video-4.mp4",
 ];
 
 export const HeroSection = () => {

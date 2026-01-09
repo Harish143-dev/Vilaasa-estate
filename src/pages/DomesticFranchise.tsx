@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Navbar } from "@/components/Navbar";
@@ -10,20 +10,17 @@ import coltonBeachResort from "@/assets/colton-beach-resort.jpg";
 import luxePremiumSaloon from "@/assets/luxe-premium-saloon.jpg";
 import zenWellnessSpa from "@/assets/zen-wellness-spa.jpg";
 import ayurWellnessCenter from "@/assets/ayur-wellness-center.jpg";
-
-type FranchiseType = "resort" | "saloon" | "wellness" | "spa";
+import { useCurrency } from "@/contexts/CurrencyContext";
 
 const DomesticFranchise = () => {
-  const [activeType, setActiveType] = useState<FranchiseType | null>(null);
+  const [activeType, setActiveType] = useState<string | null>(null);
   const [inquiryOpen, setInquiryOpen] = useState(false);
-  const [selectedFranchise, setSelectedFranchise] = useState<{ id: string; name: string } | null>(null);
+  const [selectedFranchise, setSelectedFranchise] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
 
-  const franchiseTypes: { id: FranchiseType; label: string; icon: string }[] = [
-    { id: "resort", label: "Resort", icon: "hotel" },
-    { id: "saloon", label: "Saloon", icon: "content_cut" },
-    { id: "wellness", label: "Wellness", icon: "spa" },
-    { id: "spa", label: "Spa", icon: "self_improvement" },
-  ];
+  const { formatAmount } = useCurrency();
 
   // Franchise opportunities
   const franchises = [
@@ -32,29 +29,39 @@ const DomesticFranchise = () => {
       name: "Wellness Resorts",
       location: "Kerala & Pondicherry",
       type: "wellness",
-      investment: "₹3.5 Cr+",
+      investment: 7000000,
       roi: "24% annually",
       image: wellnessResortKerala,
       status: "Opening 2025",
-      features: ["Authentic Ayurvedic treatments", "Yoga & meditation programs", "Transformative wellness journeys", "5,000+ years healing wisdom"],
+      features: [
+        "Authentic Ayurvedic treatments",
+        "Yoga & meditation programs",
+        "Transformative wellness journeys",
+        "5,000+ years healing wisdom",
+      ],
     },
     {
       id: "carlton-wellness-spa",
       name: "Carlton Wellness Spa",
       location: "Integrated Across All Properties",
       type: "spa",
-      investment: "₹1.8 Cr+",
+      investment: 7000000,
       roi: "26% annually",
       image: carltonWellnessSpa,
       status: "Available Now",
-      features: ["Bespoke wellness treatments", "Ayurvedic & contemporary therapies", "Available at all properties", "Signature Carlton experiences"],
+      features: [
+        "Bespoke wellness treatments",
+        "Ayurvedic & contemporary therapies",
+        "Available at all properties",
+        "Signature Carlton experiences",
+      ],
     },
     {
       id: "colton-resort-chennai",
       name: "Colton Beach Resort",
       location: "Chennai ECR",
       type: "resort",
-      investment: "₹2.5 Cr+",
+      investment: 7000000,
       roi: "22% annually",
       image: coltonBeachResort,
       status: "Available Now",
@@ -65,7 +72,7 @@ const DomesticFranchise = () => {
       name: "Luxe Premium Saloon",
       location: "Mumbai, Delhi, Bangalore",
       type: "saloon",
-      investment: "₹85 Lakhs+",
+      investment: 7000000,
       roi: "28% annually",
       image: luxePremiumSaloon,
       status: "Available Now",
@@ -76,28 +83,39 @@ const DomesticFranchise = () => {
       name: "Zen Wellness Spa",
       location: "Goa, Kerala, Rishikesh",
       type: "wellness",
-      investment: "₹1.2 Cr+",
+      investment: 70300000,
       roi: "25% annually",
       image: zenWellnessSpa,
       status: "Available Now",
-      features: ["Holistic wellness", "Ayurveda + modern spa", "Retreat packages"],
+      features: [
+        "Holistic wellness",
+        "Ayurveda + modern spa",
+        "Retreat packages",
+      ],
     },
     {
       id: "ayur-wellness-bangalore",
       name: "Ayur Wellness Center",
       location: "Bangalore, Chennai, Pune",
       type: "wellness",
-      investment: "₹95 Lakhs+",
+      investment: 9000000,
+      roi: "30% annually",
+      image: ayurWellnessCenter,
+      status: "Available Now",
+      features: ["Medical wellness", "Subscription model", "Doctor network"],
+    },
+    {
+      id: "wellness-bangalore",
+      name: "Ayur Wellness Center",
+      location: "Bangalore, Chennai, Pune",
+      type: "Hotel",
+      investment: 7000000,
       roi: "30% annually",
       image: ayurWellnessCenter,
       status: "Available Now",
       features: ["Medical wellness", "Subscription model", "Doctor network"],
     },
   ];
-
-  const filteredFranchises = activeType
-    ? franchises.filter((f) => f.type === activeType)
-    : franchises;
 
   const clearFilters = () => {
     setActiveType(null);
@@ -107,6 +125,14 @@ const DomesticFranchise = () => {
     setSelectedFranchise(franchise);
     setInquiryOpen(true);
   };
+  const franchiseTypes = useMemo(() => {
+    return Array.from(new Set(franchises.map((p) => p.type)));
+  }, []);
+
+  const filteredFranchises = franchises.filter((p) => {
+    if (activeType && p.type !== activeType) return false;
+    return true;
+  });
 
   return (
     <div className="overflow-x-hidden">
@@ -133,7 +159,9 @@ const DomesticFranchise = () => {
               to="/domestic"
               className="flex items-center gap-2 text-muted-foreground hover:text-gold transition-colors text-sm"
             >
-              <span className="material-symbols-outlined text-base">arrow_back</span>
+              <span className="material-symbols-outlined text-base">
+                arrow_back
+              </span>
               Back to Domestic
             </Link>
 
@@ -160,16 +188,17 @@ const DomesticFranchise = () => {
               <div className="flex flex-wrap gap-3">
                 {franchiseTypes.map((type) => (
                   <button
-                    key={type.id}
-                    onClick={() => setActiveType(activeType === type.id ? null : type.id)}
+                    key={type}
+                    onClick={() =>
+                      setActiveType(activeType === type ? null : type)
+                    }
                     className={`px-5 py-2.5 text-xs font-bold uppercase tracking-wider rounded-sm transition-all flex items-center gap-2 ${
-                      activeType === type.id
+                      activeType === type
                         ? "bg-gold text-gold-foreground"
                         : "border border-border text-muted-foreground hover:border-gold/50 hover:text-foreground"
                     }`}
                   >
-                    <span className="material-symbols-outlined text-base">{type.icon}</span>
-                    {type.label}
+                    {type}
                   </button>
                 ))}
               </div>
@@ -181,7 +210,9 @@ const DomesticFranchise = () => {
                 onClick={clearFilters}
                 className="text-sm text-muted-foreground hover:text-gold transition-colors w-fit flex items-center gap-2"
               >
-                <span className="material-symbols-outlined text-base">close</span>
+                <span className="material-symbols-outlined text-base">
+                  close
+                </span>
                 Clear filter
               </button>
             )}
@@ -207,7 +238,12 @@ const DomesticFranchise = () => {
                 transition={{ duration: 0.5, delay: index * 0.1 }}
               >
                 <button
-                  onClick={() => handleFranchiseClick({ id: franchise.id, name: franchise.name })}
+                  onClick={() =>
+                    handleFranchiseClick({
+                      id: franchise.id,
+                      name: franchise.name,
+                    })
+                  }
                   className="group block overflow-hidden rounded-sm border border-border bg-card hover:border-gold/50 transition-all w-full text-left"
                 >
                   <div className="relative aspect-[4/3] overflow-hidden">
@@ -228,31 +264,42 @@ const DomesticFranchise = () => {
                     <h3 className="text-xl font-light text-foreground group-hover:text-gold transition-colors">
                       {franchise.name}
                     </h3>
-                    <p className="text-sm text-muted-foreground mt-1">{franchise.location}</p>
-                    
+                    <p className="text-sm text-muted-foreground mt-1">
+                      {franchise.location}
+                    </p>
+
                     {/* Features */}
                     <div className="mt-4 space-y-2">
                       {franchise.features.slice(0, 3).map((feature, idx) => (
-                        <div key={idx} className="flex items-center gap-2 text-sm text-foreground/70">
-                          <span className="material-symbols-outlined text-primary text-sm">check_circle</span>
+                        <div
+                          key={idx}
+                          className="flex items-center gap-2 text-sm text-foreground/70"
+                        >
+                          <span className="material-symbols-outlined text-primary text-sm">
+                            check_circle
+                          </span>
                           {feature}
                         </div>
                       ))}
                     </div>
-                    
+
                     <div className="flex items-center gap-4 mt-4 pt-4 border-t border-border">
                       <div>
                         <p className="text-xs text-muted-foreground uppercase tracking-wide">
                           Investment
                         </p>
-                        <p className="text-lg font-bold text-gold">{franchise.investment}</p>
+                        <p className="text-lg font-bold text-gold">
+                          {`${formatAmount(franchise.investment)}+`}
+                        </p>
                       </div>
                       <div className="h-8 w-px bg-border" />
                       <div>
                         <p className="text-xs text-muted-foreground uppercase tracking-wide">
                           Expected ROI
                         </p>
-                        <p className="text-lg font-bold text-primary">{franchise.roi}</p>
+                        <p className="text-lg font-bold text-primary">
+                          {franchise.roi}
+                        </p>
                       </div>
                     </div>
                   </div>
