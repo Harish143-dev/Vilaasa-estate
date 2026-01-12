@@ -52,19 +52,42 @@ export const ChannelPartnerSection = () => {
 
     setIsSubmitting(true);
 
-    // Simulate form submission
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    try {
+      const response = await fetch(
+        "https://automate.eyelevelstudio.in/webhook/9979b8b1-8114-4ebe-b1e2-6e2002bef970",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name: formData.name,
+            email: formData.email,
+            message: `Phone: ${formData.phoneCountryCode} ${formData.phone} - I am interested in becoming a channel partner.`,
+          }),
+        }
+      );
 
-    setIsSubmitting(false);
+      if (!response.ok) {
+        throw new Error("Failed to submit");
+      }
 
-    toast({
-      title: "Registration Successful!",
-      description:
-        "Thank you for your interest. Our team will contact you within 24 hours.",
-    });
+      toast({
+        title: "Registration Successful!",
+        description:
+          "Thank you for your interest. Our team will contact you within 24 hours.",
+      });
 
-    setFormData({ name: "", email: "", phone: "", phoneCountryCode: "+91" });
- 
+      setFormData({ name: "", email: "", phone: "", phoneCountryCode: "+91" });
+    } catch (error) {
+      toast({
+        title: "Submission Failed",
+        description: "Something went wrong. Please try again later.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
