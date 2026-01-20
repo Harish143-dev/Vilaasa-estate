@@ -7,14 +7,15 @@ import heritageVilla from "@/assets/heritage-villa.jpg";
 import spaWellness from "@/assets/spa-wellness.jpg";
 import { useRef } from "react";
 import { useState } from "react";
-import video_1 from "../../public/domesticVideos/video_1.mp4";
-import video_2 from "../../public/domesticVideos/video_2.mp4";
-import video_3 from "../../public/domesticVideos/Video_3.mp4";
-import video_4 from "../../public/domesticVideos/video_4.mp4";
-import video_5 from "../../public/domesticVideos/video_5.mp4";
 
 const Domestic = () => {
-  const domesticHeroVideo = [video_1, video_2, video_3, video_4, video_5];
+  const domesticHeroVideo = [
+    "/domesticVideos/video_1.mp4",
+    "/domesticVideos/video_2.mp4",
+    "/domesticVideos/video_3.mp4",
+    "/domesticVideos/video_4.mp4",
+    "/domesticVideos/video_5.mp4",
+  ];
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
   const videoRef = useRef<HTMLVideoElement>(null);
 

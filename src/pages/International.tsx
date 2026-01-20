@@ -8,10 +8,6 @@ import { InquiryFormDialog } from "@/components/InquiryFormDialog";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import { Link } from "react-router-dom";
 import { useProperties } from "@/hooks/useProperties";
-import video_1 from "../../public/internationalVideo/video_1.mp4";
-import video_2 from "../../public/internationalVideo/video_2.mp4";
-import video_3 from "../../public/internationalVideo/video_3.mp4";
-import video_4 from "../../public/internationalVideo/video_4.mp4";
 
 const benefits = [
   {
@@ -31,7 +27,12 @@ const benefits = [
   },
 ];
 
-const heroVideos = [video_1, video_2, video_3, video_4];
+const heroVideos = [
+  "/internationalVideo/video_1.mp4",
+  "/internationalVideo/video_1.mp4",
+  "/internationalVideo/video_1.mp4",
+  "/internationalVideo/video_1.mp4",
+];
 const International = () => {
   const { formatAmount } = useCurrency();
   const { data: properties = [], isLoading, isError } = useProperties();
@@ -182,10 +183,11 @@ const International = () => {
               <button
                 key={type}
                 onClick={() => setActiveType(activeType === type ? null : type)}
-                className={`px-5 py-2.5 text-xs font-bold uppercase tracking-wider rounded-sm transition-all ${activeType === type
-                  ? "bg-primary text-primary-foreground"
-                  : "border border-border text-muted-foreground hover:border-primary/50 hover:text-foreground"
-                  }`}
+                className={`px-5 py-2.5 text-xs font-bold uppercase tracking-wider rounded-sm transition-all ${
+                  activeType === type
+                    ? "bg-primary text-primary-foreground"
+                    : "border border-border text-muted-foreground hover:border-primary/50 hover:text-foreground"
+                }`}
               >
                 {type}
               </button>
@@ -206,7 +208,9 @@ const International = () => {
             <div className="max-w-[1280px] mx-auto">
               <div className="flex items-center justify-between mb-8">
                 <p className="text-muted-foreground">
-                  {isLoading ? 'Loading properties...' : `Showing ${filteredProperties.length} properties`}
+                  {isLoading
+                    ? "Loading properties..."
+                    : `Showing ${filteredProperties.length} properties`}
                 </p>
               </div>
 
@@ -214,7 +218,9 @@ const International = () => {
               {isLoading && (
                 <div className="flex flex-col items-center justify-center py-20">
                   <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-                  <p className="text-muted-foreground mt-4">Loading properties from server...</p>
+                  <p className="text-muted-foreground mt-4">
+                    Loading properties from server...
+                  </p>
                 </div>
               )}
 
@@ -225,7 +231,8 @@ const International = () => {
                     error
                   </span>
                   <p className="text-muted-foreground mt-4">
-                    Failed to load properties. Please make sure the backend server is running.
+                    Failed to load properties. Please make sure the backend
+                    server is running.
                   </p>
                 </div>
               )}
@@ -247,7 +254,9 @@ const International = () => {
                         <div className="relative aspect-[4/3] overflow-hidden">
                           <div
                             className="w-full h-full bg-cover bg-center transform group-hover:scale-105 transition-transform duration-700"
-                            style={{ backgroundImage: `url(${property.image})` }}
+                            style={{
+                              backgroundImage: `url(${property.image})`,
+                            }}
                           />
                           <div className="absolute top-4 left-4 bg-primary text-primary-foreground text-xs font-bold px-3 py-1 rounded uppercase tracking-wide">
                             {property.type}

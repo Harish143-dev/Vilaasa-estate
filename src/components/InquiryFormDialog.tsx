@@ -210,7 +210,7 @@ export const InquiryFormDialog = ({
         <DialogHeader>
           <DialogTitle className="text-xl font-light">
             {step === "form" && "Express Your Interest"}
-            {step === "otp" && "Verify Your Number"}
+            {step === "otp" && "Verify Your email"}
             {step === "success" && "Verification Complete"}
           </DialogTitle>
           <DialogDescription className="text-muted-foreground">
@@ -218,7 +218,7 @@ export const InquiryFormDialog = ({
               (projectName
                 ? `Inquiring about: ${projectName}`
                 : "Fill in your details to learn more")}
-            {step === "otp" && "Enter the OTP sent to your phone"}
+            {step === "otp" && "Enter the OTP sent to your Email"}
             {step === "success" &&
               "You now have access to detailed project information"}
           </DialogDescription>
@@ -356,7 +356,7 @@ export const InquiryFormDialog = ({
                 <p className="text-sm text-muted-foreground text-center">
                   Enter the 6-digit code sent to{" "}
                   <span className="text-foreground font-medium">
-                    {formData.phone}
+                    {formData.email}
                   </span>
                 </p>
 

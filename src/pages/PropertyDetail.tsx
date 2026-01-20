@@ -13,10 +13,18 @@ import { useProperty } from "@/hooks/useProperties";
 
 const PropertyDetail = () => {
   const [openCalendar, setOpenCalendar] = useState(false);
+  const [requested, setRequested] = useState<number[]>([]);
   const { id } = useParams<{ id: string }>();
   const { data: property, isLoading, isError } = useProperty(id || "the-aurum");
   const { formatAmount } = useCurrency();
-  console.log(property);
+
+  const handleRequest = (idx: number) => {
+    if (requested.includes(idx)) return;
+
+    setRequested((prev) => [...prev, idx]);
+
+    // your API / modal / logic here
+  };
 
   // Loading state
   if (isLoading) {
@@ -298,32 +306,42 @@ const PropertyDetail = () => {
                 </tr>
               </thead>
               <tbody>
-                {property.configurations.map((config, idx) => (
-                  <tr
-                    key={idx}
-                    className="border-b border-border/50 hover:bg-card/50 transition-colors"
-                  >
-                    <td className="py-4 px-4 text-foreground font-medium">
-                      {config.type}
-                    </td>
-                    <td className="py-4 px-4 text-muted-foreground">
-                      {config.area}
-                    </td>
+                {property.configurations.map((config, idx: number) => {
+                  const isRequested = requested.includes(idx);
 
-                    <td className="py-4 px-4 text-foreground">
-                      {formatAmount(config.price)}
-                    </td>
-                    <td className="py-4 px-4">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="text-primary"
-                      >
-                        Request Cost Sheet
-                      </Button>
-                    </td>
-                  </tr>
-                ))}
+                  return (
+                    <tr
+                      key={idx}
+                      className="border-b border-border/50 hover:bg-card/50 transition-colors"
+                    >
+                      <td className="py-4 px-4 text-foreground font-medium">
+                        {config.type}
+                      </td>
+
+                      <td className="py-4 px-4 text-muted-foreground">
+                        {config.area}
+                      </td>
+
+                      <td className="py-4 px-4 text-foreground">
+                        {formatAmount(config.price)}
+                      </td>
+
+                      <td className="py-4 px-4">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="text-primary"
+                          onClick={() => handleRequest(idx)}
+                          disabled={isRequested}
+                        >
+                          {isRequested
+                            ? "Cost Sheet Requested"
+                            : "Request Cost Sheet"}
+                        </Button>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>

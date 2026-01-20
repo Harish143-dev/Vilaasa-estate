@@ -358,9 +358,7 @@ export function useConstructionAssets() {
 
 //
 function getPdfMedia(product: ProductAttributeValue): string | null {
-  const pdf = product.media?.find((m) =>
-    m.url.toLowerCase().endsWith(".pdf")
-  );
+  const pdf = product.media?.find((m) => m.url.toLowerCase().endsWith(".pdf"));
   return pdf?.url || null;
 }
 
@@ -371,4 +369,3 @@ function getPdfMedia(product: ProductAttributeValue): string | null {
 //     brochurePdf: getPdfMedia(product),
 //   };
 // }
-
