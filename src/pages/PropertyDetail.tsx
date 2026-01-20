@@ -18,6 +18,7 @@ const PropertyDetail = () => {
   const { data: property, isLoading, isError } = useProperty(id || "the-aurum");
   const { formatAmount } = useCurrency();
 
+  console.log(property);
   const handleRequest = (idx: number) => {
     if (requested.includes(idx)) return;
 
@@ -226,10 +227,20 @@ const PropertyDetail = () => {
               </motion.div>
             ))}
           </div>
-          <Button variant="outline" className="mt-8 gap-2">
-            <span className="material-symbols-outlined text-lg">download</span>
-            Download Brochure
-          </Button>
+          {property.brochure && (
+            <a
+              href={property.brochure}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Button variant="outline" className="mt-8 gap-2">
+                <span className="material-symbols-outlined text-lg">
+                  download
+                </span>
+                Download Brochure
+              </Button>
+            </a>
+          )}
         </div>
       </section>
 
@@ -437,6 +448,7 @@ const PropertyDetail = () => {
       <CalanderDialog
         open={openCalendar}
         onOpenChange={setOpenCalendar}
+        propertyName={property.name}
         onConfirm={({ date, time }) => {
           const payload = {
             propertyId: property.id,

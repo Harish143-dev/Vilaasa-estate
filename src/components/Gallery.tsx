@@ -7,7 +7,11 @@ interface GalleryImage {
   image: string;
 }
 
-const Gallery = ({ property }: { property: { galleryImages: GalleryImage[] } }) => {
+const Gallery = ({
+  property,
+}: {
+  property: { galleryImages: GalleryImage[] };
+}) => {
   const images = property.galleryImages || [];
   const [index, setIndex] = useState(0);
 
@@ -44,12 +48,9 @@ const Gallery = ({ property }: { property: { galleryImages: GalleryImage[] } }) 
       <div className="max-w-[1280px] mx-auto">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <span className="text-primary/60 uppercase tracking-[0.2em] text-xs font-bold">
-              Master Plans
+            <span className="text-primary/60 uppercase tracking-[0.2em] text-xl font-bold">
+              Gallery
             </span>
-            <h2 className="text-2xl font-light text-foreground mt-2">
-              The Layout
-            </h2>
           </div>
           <div className="flex gap-2">
             <button
@@ -97,9 +98,11 @@ const Gallery = ({ property }: { property: { galleryImages: GalleryImage[] } }) 
                   </div>
 
                   <h3 className="text-foreground font-medium">{plan.name}</h3>
-                  <p className="text-muted-foreground text-sm">
-                    {plan.description}
-                  </p>
+                  {plan.description && (
+                    <p className="text-muted-foreground text-sm">
+                      {plan.description}
+                    </p>
+                  )}
                 </motion.div>
               </div>
             ))}

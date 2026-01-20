@@ -1,7 +1,7 @@
-import axios from 'axios';
+import axios from "axios";
 
 // const GRAPHQL_URL = 'http://localhost:8000/graphql/';
-const GRAPHQL_URL = 'https://api.theeyelevelstudio.com/graphql/';
+const GRAPHQL_URL = "https://api.theeyelevelstudio.com/graphql/";
 
 export interface GraphQLResponse<T> {
   data: T;
@@ -10,16 +10,16 @@ export interface GraphQLResponse<T> {
 
 export async function graphqlRequest<T>(
   query: string,
-  variables?: Record<string, unknown>
+  variables?: Record<string, unknown>,
 ): Promise<T> {
   const response = await axios.post<GraphQLResponse<T>>(
     GRAPHQL_URL,
     { query, variables },
     {
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
-    }
+    },
   );
 
   if (response.data.errors && response.data.errors.length > 0) {
@@ -28,7 +28,6 @@ export async function graphqlRequest<T>(
 
   return response.data.data;
 }
-
 
 // GraphQL Queries
 export const PRODUCTS_QUERY = `
@@ -111,6 +110,10 @@ export const PRODUCT_BY_SLUG_QUERY = `
         values {
           name
           plainText
+          file {
+            url
+            contentType
+               }
         }
       }
       metadata {
@@ -134,6 +137,10 @@ export interface ProductAttribute {
   values: {
     name: string;
     plainText: string | null;
+    file?: {
+      url: string;
+      contentType: string;
+    } | null;
   }[];
 }
 

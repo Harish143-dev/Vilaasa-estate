@@ -99,16 +99,17 @@ export const InquiryFormDialog = ({
       return;
     }
 
-    // Validate phone number (basic validation)
-    // const phoneRegex = /^[0-9]{10}$/;
-    // if (!phoneRegex.test(formData.phone.replace(/\s/g, ""))) {
-    //   toast({
-    //     title: "Invalid Phone Number",
-    //     description: "Please enter a valid 10-digit phone number.",
-    //     variant: "destructive",
-    //   });
-    //   return;
-    // }
+    // validate Phone Number
+    const numberOnlyRegex = /^[0-9]+$/;
+
+    if (!numberOnlyRegex.test(formData.phone)) {
+      toast({
+        title: "Invalid Phone Number",
+        description: "Phone number should contain numbers only.",
+        variant: "destructive",
+      });
+      return;
+    }
 
     // Validate email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

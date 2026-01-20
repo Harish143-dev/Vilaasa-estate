@@ -5,6 +5,7 @@ import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { CountryCodeSelect } from "@/components/CountryCodeSelect";
+import { useCurrency } from "@/contexts/CurrencyContext";
 
 const interestOptions = [
   { id: "india", icon: "temple_hindu", label: "India Estate" },
@@ -13,11 +14,12 @@ const interestOptions = [
 ];
 
 const budgetOptions = [
-  { value: "", label: "Select Range" },
-  { value: "1m-5m", label: "$1M - $5M" },
-  { value: "5m-10m", label: "$5M - $10M" },
-  { value: "10m-50m", label: "$10M - $50M" },
-  { value: "50m+", label: "$50M+" },
+  { value: "", start: null, end: null },
+
+  { value: "range-1", start: 10000000, end: 50000000 },
+  { value: "range-2", start: 50000000, end: 100000000 },
+  { value: "range-3", start: 100000000, end: 500000000 },
+  { value: "range-4", start: 500000000, end: null },
 ];
 
 const Contact = () => {
@@ -30,6 +32,7 @@ const Contact = () => {
     budget: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { formatAmount } = useCurrency();
 
   const toggleInterest = (id: string) => {
     setFormData((prev) => ({
@@ -40,6 +43,15 @@ const Contact = () => {
     }));
   };
 
+  const selectedBudget = budgetOptions.find((b) => b.value === formData.budget);
+
+  let budgetDisplay = "";
+
+  if (selectedBudget?.start !== null) {
+    budgetDisplay = selectedBudget.end
+      ? `${formatAmount(selectedBudget.start)} – ${formatAmount(selectedBudget.end)}`
+      : `${formatAmount(selectedBudget.start)}+`;
+  }
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -51,8 +63,63 @@ const Contact = () => {
       });
       return;
     }
+    const numberOnlyRegex = /^[0-9]+$/;
+
+    if (!numberOnlyRegex.test(formData.phone)) {
+      toast({
+        title: "Invalid Phone Number",
+        description: "Phone number should contain numbers only.",
+        variant: "destructive",
+      });
+      return;
+    }
 
     setIsSubmitting(true);
+
+    try {
+      const response = await fetch(
+        "https://harish1435.app.n8n.cloud/webhook/29ad93d4-a5b9-4523-a0bd-500d71cc9c90",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name: formData.name,
+            phone: `${formData.phoneCountryCode} ${formData.phone}`,
+            interests: formData.interests,
+            budget: budgetDisplay,
+          }),
+        },
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to submit");
+      }
+
+      toast({
+        title: "Inquiry Submitted!",
+        description:
+          "Thank you for your interest. Our team will contact you within 24 hours.",
+      });
+      setFormData({
+        name: "",
+        phone: "",
+        interests: [],
+        budget: "",
+        phoneCountryCode: "+91",
+      });
+    } catch (error) {
+      toast({
+        title: "Error submitting form",
+        description: "Please try again later.",
+        variant: "destructive",
+      });
+
+      return;
+    } finally {
+      setIsSubmitting(false);
+    }
 
     // Simulate form submission
     await new Promise((resolve) => setTimeout(resolve, 1500));
@@ -62,13 +129,6 @@ const Contact = () => {
       description: "A relationship manager will contact you within 24 hours.",
     });
 
-    setFormData({
-      name: "",
-      phone: "",
-      interests: [],
-      budget: "",
-      phoneCountryCode: "+91",
-    });
     setIsSubmitting(false);
   };
 
@@ -113,10 +173,10 @@ const Contact = () => {
                 Direct Line
               </span>
               <a
-                href="tel:04443570713"
+                href="tel:+917550001123"
                 className="text-3xl md:text-4xl font-light text-foreground hover:text-primary transition-colors"
               >
-                044 4357 0713
+                +91 7550001123
               </a>
               <p className="text-muted-foreground text-sm">
                 Available Mon-Sat, 9:00 AM — 7:00 PM IST
@@ -300,7 +360,7 @@ const Contact = () => {
                   htmlFor="budget"
                   className="text-foreground text-sm font-medium"
                 >
-                  Estimated Budget (USD)
+                  Estimated Budget
                 </label>
                 <div className="relative">
                   <select
@@ -316,7 +376,11 @@ const Contact = () => {
                   >
                     {budgetOptions.map((option) => (
                       <option key={option.value} value={option.value}>
-                        {option.label}
+                        {option.start === null
+                          ? "Select Range"
+                          : option.end
+                            ? `${formatAmount(option.start)} – ${formatAmount(option.end)}`
+                            : `${formatAmount(option.start)}+`}
                       </option>
                     ))}
                   </select>

@@ -14,7 +14,6 @@ import {
   ConstructionAsset,
   DEFAULT_PROPERTY_IMAGES,
   DEFAULT_PROPERTY_IMAGE,
-  ProductAttributeValue,
 } from "@/types/property";
 
 // Helper to get attribute value from Saleor product (Single)
@@ -61,6 +60,20 @@ function parseDescription(description: string | null): string[] {
 // Helper to extract price
 function getProductPrice(product: SaleorProduct): number {
   return product.pricing?.priceRange.start.gross.amount || 0;
+}
+// get pdf file
+function getPdfMedia(product: SaleorProduct): string | null {
+  const pdf = product.media?.find((m) => m.url.toLowerCase().endsWith(".pdf"));
+  return pdf?.url || null;
+}
+function getFileAttributeUrl(
+  attributes: ProductAttribute[],
+  slug: string,
+): string | null {
+  const attr = attributes.find((a) => a.attribute.slug === slug);
+  if (!attr || !attr.values.length) return null;
+
+  return attr.values[0].file?.url || null;
 }
 
 // Transform Saleor product to PropertyListItem
@@ -140,6 +153,11 @@ function transformToDetail(product: SaleorProduct): PropertyDetail {
 
   const descriptions = parseDescription(product.description);
 
+  const brochure = getFileAttributeUrl(
+    product.attributes,
+    "catalogue", // your file attribute slug
+  );
+
   return {
     id: product.slug,
     name: product.name,
@@ -153,6 +171,7 @@ function transformToDetail(product: SaleorProduct): PropertyDetail {
       product.media?.[0]?.url ||
       DEFAULT_PROPERTY_IMAGES[product.slug] ||
       DEFAULT_PROPERTY_IMAGE,
+    brochure: brochure || "",
     description:
       descriptions.length > 0
         ? descriptions
@@ -251,6 +270,7 @@ function transformToDetail(product: SaleorProduct): PropertyDetail {
         return { icon, name, description };
       },
     ),
+
     nearbyLocations: [
       { name: "City Center", distance: "10 mins drive" },
       { name: "Airport", distance: "30 mins drive" },
@@ -267,7 +287,6 @@ export function useProperties() {
       const data = await graphqlRequest<ProductsResponse>(PRODUCTS_QUERY, {
         first: 50,
       });
-      console.log(data);
 
       return data.products.edges.map((edge) => transformToListItem(edge.node));
     },
@@ -347,7 +366,7 @@ export function useConstructionAssets() {
       const data = await graphqlRequest<ProductsResponse>(PRODUCTS_QUERY, {
         first: 50,
       });
-      console.log(data);
+
       return data.products.edges
         .map((edge) => transformToConstructionAsset(edge.node))
         .filter((asset): asset is ConstructionAsset => asset !== null);
@@ -357,10 +376,6 @@ export function useConstructionAssets() {
 }
 
 //
-function getPdfMedia(product: ProductAttributeValue): string | null {
-  const pdf = product.media?.find((m) => m.url.toLowerCase().endsWith(".pdf"));
-  return pdf?.url || null;
-}
 
 // function transformTofileDetail(product: SaleorProduct): PropertyDetail {
 //   return {

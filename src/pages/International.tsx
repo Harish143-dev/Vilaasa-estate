@@ -29,9 +29,9 @@ const benefits = [
 
 const heroVideos = [
   "/internationalVideo/video_1.mp4",
-  "/internationalVideo/video_1.mp4",
-  "/internationalVideo/video_1.mp4",
-  "/internationalVideo/video_1.mp4",
+  "/internationalVideo/video_2.mp4",
+  "/internationalVideo/video_3.mp4",
+  "/internationalVideo/video_4.mp4",
 ];
 const International = () => {
   const { formatAmount } = useCurrency();
@@ -45,7 +45,10 @@ const International = () => {
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  const filteredProperties = properties.filter((p) => {
+  const internaltional = properties.filter(
+    (p) => p.franchiseCategory === "International",
+  );
+  const filteredProperties = internaltional.filter((p) => {
     if (activeType && p.type !== activeType) return false;
     return true;
   });

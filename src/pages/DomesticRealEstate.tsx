@@ -19,7 +19,7 @@ const DomesticRealEstate = () => {
   const { formatAmount } = useCurrency();
   /* Removed hardcoded properties */
   const { data: properties = [], isLoading, isError } = useProperties();
-  console.log(properties);
+ 
 
   const domesticEstate = properties.filter(
     (p) => p.franchiseCategory === "Domestic",
@@ -33,7 +33,7 @@ const DomesticRealEstate = () => {
     if (activeLocation && p.location !== activeLocation) return false;
     return true;
   });
-  console.log(filteredProperties);
+ 
 
   const clearFilters = () => {
     setActiveLocation(null);

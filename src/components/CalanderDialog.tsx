@@ -14,6 +14,7 @@ interface CalanderDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onConfirm: (data: { date: Date; time: string }) => void;
+  propertyName: string;
 }
 
 const timeSlots = [
@@ -31,6 +32,7 @@ export const CalanderDialog = ({
   open,
   onOpenChange,
   onConfirm,
+  propertyName,
 }: CalanderDialogProps) => {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
   const [selectedTime, setSelectedTime] = useState("");
@@ -54,7 +56,7 @@ export const CalanderDialog = ({
       <DialogContent className="sm:max-w-md bg-background border-border">
         <DialogHeader>
           <DialogTitle className="text-xl font-light">
-            Schedule Your Visit
+            Schedule Your Visit to {propertyName}
           </DialogTitle>
           <DialogDescription className="text-muted-foreground">
             Select a preferred date and time for your visit

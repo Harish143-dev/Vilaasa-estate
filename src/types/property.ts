@@ -65,6 +65,7 @@ export interface PropertyDetail {
   price: number;
   priceValue: string;
   status: string;
+  brochure: string;
   heroImage: string;
   heroVideo?: string;
   description: string[];
@@ -127,14 +128,7 @@ export interface ConstructionAsset {
   gallery: ConstructionGalleryItem[];
 }
 
-export interface ProductAttributeValue {
-  media?: {
-    url: string;
-    alt: string | null;
-    type: "IMAGE" | "VIDEO" | "FILE";
-  
-  }[];
-}
+
 
 
 
