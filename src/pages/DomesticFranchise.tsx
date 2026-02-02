@@ -13,9 +13,11 @@ import ayurWellnessCenter from "@/assets/ayur-wellness-center.jpg";
 import { useCurrency } from "@/contexts/CurrencyContext";
 
 import { useProperties } from "@/hooks/useProperties";
+import { useFranchiseList } from "@/hooks/useNewFranchise";
 
 const DomesticFranchise = () => {
   const [activeType, setActiveType] = useState<string | null>(null);
+  const [location, setLocation] = useState<string | null>(null);
   const [inquiryOpen, setInquiryOpen] = useState(false);
   const [selectedFranchise, setSelectedFranchise] = useState<{
     id: string;
@@ -23,22 +25,27 @@ const DomesticFranchise = () => {
   } | null>(null);
 
   const { formatAmount } = useCurrency();
-  const { data: products = [], isLoading, isError } = useProperties();
+  // const { data: products = [], isLoading, isError } = useProperties();
 
-  // Filter only Franchise products
-  const franchises = useMemo(() => {
-    return products.filter((p) => p.type === 'Franchise');
-  }, [products]);
+  const { data: franchises = [], isLoading, isError } = useFranchiseList();
 
-  const franchiseTypes = useMemo(() => {
-    // Extract categories from franchise-category attribute
-    return Array.from(new Set(franchises.map((p) => p.franchiseCategory).filter(Boolean))) as string[];
-  }, [franchises]);
+  const domesticFranchise = franchises.filter(
+    (p) => p.category === "Franchises",
+  );
 
-  const filteredFranchises = franchises.filter((p) => {
-    if (activeType && p.franchiseCategory !== activeType) return false;
+  const filteredFranchises = domesticFranchise.filter((f) => {
+    if (activeType && f.type !== activeType) return false;
+    if (location && f.location !== location) return false;
     return true;
   });
+
+  const franchiseTypes = useMemo(() => {
+    return Array.from(new Set(filteredFranchises.map((p) => p.type)));
+  }, [filteredFranchises]);
+
+  const franchiseLocations = useMemo(() => {
+    return Array.from(new Set(filteredFranchises.map((p) => p.location)));
+  }, [filteredFranchises]);
 
   if (isLoading) {
     return (
@@ -62,6 +69,12 @@ const DomesticFranchise = () => {
 
   const clearFilters = () => {
     setActiveType(null);
+    setLocation(null);
+  };
+
+  const handlePropertyClick = (franchise: { id: string; name: string }) => {
+    setSelectedFranchise(franchise);
+    setInquiryOpen(true);
   };
 
   return (
@@ -122,16 +135,39 @@ const DomesticFranchise = () => {
                     onClick={() =>
                       setActiveType(activeType === type ? null : type)
                     }
-                    className={`px-5 py-2.5 text-xs font-bold uppercase tracking-wider rounded-sm transition-all flex items-center gap-2 ${activeType === type
-                      ? "bg-gold text-gold-foreground"
-                      : "border border-border text-muted-foreground hover:border-gold/50 hover:text-foreground"
-                      }`}
+                    className={`px-5 py-2.5 text-xs font-bold uppercase tracking-wider rounded-sm transition-all flex items-center gap-2 ${
+                      activeType === type
+                        ? "bg-gold text-gold-foreground"
+                        : "border border-border text-muted-foreground hover:border-gold/50 hover:text-foreground"
+                    }`}
                   >
                     {type}
                   </button>
                 ))}
               </div>
             </div>
+
+            {/* Locations */}
+            {/* <div>
+              <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground mb-4">
+                Location
+              </h3>
+              <div className="flex flex-wrap gap-3">
+                {franchiseLocations.map((loc) => (
+                  <button
+                    key={loc}
+                    onClick={() => setLocation(location === loc ? null : loc)}
+                    className={`px-5 py-2.5 text-xs font-bold uppercase tracking-wider rounded-sm transition-all ${
+                      location === loc
+                        ? "bg-primary text-primary-foreground"
+                        : "border border-border text-muted-foreground hover:border-primary/50 hover:text-foreground"
+                    }`}
+                  >
+                    {loc}
+                  </button>
+                ))}
+              </div>
+            </div> */}
 
             {/* Clear Filters */}
             {activeType && (
@@ -166,8 +202,13 @@ const DomesticFranchise = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
               >
-                <Link
-                  to={`/franchise/${franchise.id}`}
+                <button
+                  onClick={() =>
+                    handlePropertyClick({
+                      id: franchise.id,
+                      name: franchise.name,
+                    })
+                  }
                   className="group block overflow-hidden rounded-sm border border-border bg-card hover:border-gold/50 transition-all w-full text-left"
                 >
                   <div className="relative aspect-[4/3] overflow-hidden">
@@ -176,13 +217,13 @@ const DomesticFranchise = () => {
                       style={{ backgroundImage: `url(${franchise.image})` }}
                     />
                     <div className="absolute top-4 left-4 bg-gold text-gold-foreground text-xs font-bold px-3 py-1 rounded uppercase tracking-wide">
-                      {franchise.franchiseCategory || 'Franchise'}
+                      {franchise.type || "Franchise"}
                     </div>
-                    {franchise.status === "Opening 2025" && (
+                    {/* {franchise. === "Opening 2025" && (
                       <div className="absolute top-4 right-4 bg-primary text-primary-foreground text-xs font-bold px-3 py-1 rounded uppercase tracking-wide">
                         Coming Soon
                       </div>
-                    )}
+                    )} */}
                   </div>
                   <div className="p-6">
                     <h3 className="text-xl font-light text-foreground group-hover:text-gold transition-colors">
@@ -212,7 +253,7 @@ const DomesticFranchise = () => {
                         <p className="text-xs text-muted-foreground uppercase tracking-wide">
                           Investment
                         </p>
-                        <p className="text-lg font-bold text-gold">
+                        <p className="text-base font-bold text-gold">
                           {`${formatAmount(franchise.price)}+`}
                         </p>
                       </div>
@@ -221,8 +262,8 @@ const DomesticFranchise = () => {
                         <p className="text-xs text-muted-foreground uppercase tracking-wide">
                           Expected ROI
                         </p>
-                        <p className="text-lg font-bold text-primary">
-                          {franchise.roi}
+                        <p className="text-base font-bold text-primary">
+                          {franchise.expectedROI || "N/A"}
                         </p>
                       </div>
                     </div>
@@ -233,7 +274,7 @@ const DomesticFranchise = () => {
                       </button>
                     </div>
                   </div>
-                </Link>
+                </button>
               </motion.div>
             ))}
           </div>

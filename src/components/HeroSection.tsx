@@ -1,19 +1,18 @@
 import { useState, useRef } from "react";
 import { motion } from "framer-motion";
+import { useProperties } from "@/hooks/useProperties";
+import { Link } from "react-router-dom";
 
 const partners = [
   {
-    name: "Chaturvatika",
-    tagline: "Urban Excellence • Ongole",
-    icon: "apartment",
-  },
-  {
-    name: "Carlton Hospitality",
-    tagline: "Luxury Experiences • Premium",
+    name: "Carlton",
+    slug: "carlton",
+    tagline: "Luxury Experiences • Andhra Pradesh",
     icon: "hotel_class",
   },
   {
     name: "Oxygen Forest",
+    slug: "oxygen-forest",
     tagline: "Luxury Farm Living • Hyderabad",
     icon: "park",
   },
@@ -27,6 +26,8 @@ const heroVideos = [
 ];
 
 export const HeroSection = () => {
+  const { data: properties = [] } = useProperties();
+
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
   const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -49,10 +50,7 @@ export const HeroSection = () => {
           onEnded={handleVideoEnd}
           className="w-full h-full object-cover"
         >
-          <source
-            src={heroVideos[currentVideoIndex]}
-            type="video/mp4"
-          />
+          <source src={heroVideos[currentVideoIndex]} type="video/mp4" />
         </video>
       </div>
 
@@ -65,11 +63,8 @@ export const HeroSection = () => {
           className="flex flex-col gap-6 items-center"
         >
           <h1 className="text-foreground text-5xl md:text-7xl lg:text-8xl font-light leading-[1.1] tracking-[-0.02em] max-w-4xl font-luxia drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">
-            The Luxury of{" "}
-            <br />
-            <span className="text-foreground/90">
-              Certainty
-            </span>
+            The Luxury of <br />
+            <span className="text-foreground/90">Certainty</span>
           </h1>
 
           <div className="h-px w-24 bg-primary/50 my-6 shadow-[0_2px_8px_rgba(0,0,0,0.5)]" />
@@ -99,24 +94,23 @@ export const HeroSection = () => {
         transition={{ delay: 1, duration: 0.8 }}
         className="absolute bottom-0 left-0 right-0 z-20"
       >
-        <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-foreground/10 bg-background/80 backdrop-blur-md">
+        <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-foreground/10 bg-background/80 backdrop-blur-md">
           {partners.map((partner, index) => (
-            <div
-              key={index}
-              className="flex items-center justify-between px-6 md:px-8 py-5 group cursor-pointer hover:bg-foreground/5 transition-colors"
-            >
-              <div className="flex flex-col gap-1">
-                <span className="text-primary font-medium text-base md:text-lg">
-                  {partner.name}
-                </span>
-                <span className="text-foreground/60 text-sm">
-                  {partner.tagline}
+            <Link key={index} to={`/property/${partner.slug}`}>
+              <div className="flex items-center justify-between px-6 md:px-8 py-5 group cursor-pointer hover:bg-foreground/5 transition-colors">
+                <div className="flex flex-col gap-1">
+                  <span className="text-primary font-medium text-base md:text-lg">
+                    {partner.name}
+                  </span>
+                  <span className="text-foreground/60 text-sm">
+                    {partner.tagline}
+                  </span>
+                </div>
+                <span className="material-symbols-outlined text-3xl text-foreground/40 group-hover:text-primary transition-colors">
+                  {partner.icon}
                 </span>
               </div>
-              <span className="material-symbols-outlined text-3xl text-foreground/40 group-hover:text-primary transition-colors">
-                {partner.icon}
-              </span>
-            </div>
+            </Link>
           ))}
         </div>
       </motion.div>

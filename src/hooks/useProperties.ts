@@ -135,8 +135,7 @@ function transformToListItem(product: SaleorProduct): PropertyListItem {
 function transformToDetail(product: SaleorProduct): PropertyDetail {
   const location = getAttributeValue(product.attributes, "location") || "";
   const country = getAttributeValue(product.attributes, "country") || "";
-  const status =
-    getAttributeValue(product.attributes, "status") || "Ready to Move";
+  const status = getAttributeValue(product.attributes, "status") || "Available";
   const propertyType = product.productType?.name || "Residential";
   const totalArea = getAttributeValue(product.attributes, "total-area") || "";
   const configuration =
@@ -384,3 +383,158 @@ export function useConstructionAssets() {
 //     brochurePdf: getPdfMedia(product),
 //   };
 // }
+
+// franchise
+// Franchise type
+// Franchise type
+export interface FranchiseItem {
+  id: string;
+  name: string;
+  category: string; // This will always be the category name
+  location: string;
+  price: number;
+  image: string;
+  description: string[];
+  brochure?: string | null;
+}
+
+// Transform Saleor product to FranchiseItem
+export function transformToFranchise(product: SaleorProduct): FranchiseItem {
+  const location = getAttributeValue(product.attributes, "location") || "";
+  const price = getProductPrice(product);
+  const category = product.category?.name || "Franchise";
+  const descriptions = parseDescription(product.description);
+
+  const brochure = getFileAttributeUrl(product.attributes, "catalogue");
+
+  return {
+    id: product.slug,
+    name: product.name,
+    category,
+    location,
+    price,
+    image:
+      product.media?.[0]?.url ||
+      DEFAULT_PROPERTY_IMAGES[product.slug] ||
+      DEFAULT_PROPERTY_IMAGE,
+    description:
+      descriptions.length > 0
+        ? descriptions
+        : ["A premium franchise opportunity with strong growth potential."],
+    brochure: brochure || null,
+  };
+}
+
+// Hook to fetch franchises
+export function useFranchises() {
+  return useQuery({
+    queryKey: ["franchises"],
+    queryFn: async () => {
+      const data = await graphqlRequest<ProductsResponse>(PRODUCTS_QUERY, {
+        first: 50,
+      });
+
+      // Filter products whose category is 'Franchise'
+      return data.products.edges
+        .filter((edge) => edge.node.category?.name === "Franchises")
+        .map((edge) => transformToFranchise(edge.node));
+    },
+    staleTime: 5 * 60 * 1000,
+  });
+}
+
+function getFranchiseMeta(product: SaleorProduct) {
+  const meta = product.metadata?.find(
+    (m: any) => m.key === "franchise_details",
+  );
+
+  if (!meta) return null;
+
+  try {
+    return JSON.parse(meta.value);
+  } catch (e) {
+    console.error("Invalid franchise metadata JSON", e);
+    return null;
+  }
+}
+// Franchise List Item (similar to PropertyListItem)
+export interface FranchiseListItem {
+  id: string;
+  name: string;
+  location: string;
+  price: number;
+  category: string;
+  features: string[];
+  image: string;
+
+  minInvestment: string;
+  annualROI: string;
+  paybackPeriod: string;
+  model: string;
+  totalProjectCost: string;
+}
+
+// Transform Saleor product to FranchiseListItem
+export function transformFranchiseToListItem(
+  product: SaleorProduct,
+): FranchiseListItem {
+  const category = product.category?.name || "Franchises";
+  const price = getProductPrice(product);
+
+  const franchiseMeta = getFranchiseMeta(product);
+
+  // Extract features from description
+  let features = [
+    "Investment Opportunity",
+    "Premium Location",
+    "Scalable Model",
+  ];
+
+  try {
+    if (product.description) {
+      const parsed = JSON.parse(product.description);
+      const listBlock = parsed.blocks?.find((b: any) => b.type === "list");
+      if (listBlock?.data?.items) {
+        features = listBlock.data.items;
+      }
+    }
+  } catch {}
+
+  return {
+    id: product.slug,
+    name: product.name,
+    location: franchiseMeta?.location || "",
+    price,
+    category,
+    features,
+    image:
+      product.media?.[0]?.url ||
+      DEFAULT_PROPERTY_IMAGES[product.slug] ||
+      DEFAULT_PROPERTY_IMAGE,
+
+    minInvestment: franchiseMeta?.minInvestment || "",
+    annualROI: franchiseMeta?.annualROI || "",
+    paybackPeriod: franchiseMeta?.paybackPeriod || "",
+    model: franchiseMeta?.model || "",
+    totalProjectCost: franchiseMeta?.totalProjectCost || "",
+  };
+}
+
+// Hook to fetch franchise list items
+export function useFranchiseList() {
+  return useQuery({
+    queryKey: ["franchise-list"],
+    queryFn: async () => {
+      const data = await graphqlRequest<ProductsResponse>(PRODUCTS_QUERY, {
+        first: 50,
+      });
+
+      // Filter products whose category is 'Franchise'
+      return data.products.edges
+        .filter((edge) => edge.node.category?.name === "Franchises")
+        .map((edge) => transformFranchiseToListItem(edge.node));
+    },
+
+    staleTime: 5 * 60 * 1000,
+  });
+}

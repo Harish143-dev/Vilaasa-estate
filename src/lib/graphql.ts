@@ -116,6 +116,19 @@ export const PRODUCT_BY_SLUG_QUERY = `
                }
         }
       }
+      variants {
+      id
+      name
+      sku
+      pricing {
+        price {
+          gross {
+            amount
+            currency
+          }
+        }
+      }
+    }
       metadata {
         key
         value
@@ -144,6 +157,20 @@ export interface ProductAttribute {
   }[];
 }
 
+export interface ProductAttributeArray {
+  attribute: {
+    name: string;
+    slug: string;
+  };
+  values: {
+    name: string;
+    plainText: string | null;
+    file?: {
+      url: string;
+      contentType: string;
+    } | null;
+  }[];
+}
 export interface SaleorProduct {
   id: string;
   name: string;
@@ -166,6 +193,7 @@ export interface SaleorProduct {
     };
   };
   attributes: ProductAttribute[];
+  variants: any;
   metadata: {
     key: string;
     value: string;

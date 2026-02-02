@@ -42,7 +42,7 @@ export interface PropertyGalleryImage {
 export interface PropertyAmenity {
   icon: string;
   name: string;
-  description: string;
+  description: string | string[];
 }
 
 export interface PropertyNearbyLocation {

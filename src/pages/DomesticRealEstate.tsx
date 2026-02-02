@@ -26,8 +26,6 @@ const DomesticRealEstate = () => {
   );
 
   const filteredProperties = domesticEstate.filter((p) => {
-    // Strict filter for Luxury Property
-
     if (activeType && p.type !== activeType) return false;
 
     if (activeLocation && p.location !== activeLocation) return false;

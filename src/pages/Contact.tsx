@@ -78,7 +78,7 @@ const Contact = () => {
 
     try {
       const response = await fetch(
-        "https://harish1435.app.n8n.cloud/webhook/29ad93d4-a5b9-4523-a0bd-500d71cc9c90",
+        "https://automate.eyelevelstudio.in/webhook/contact-form",
         {
           method: "POST",
           headers: {

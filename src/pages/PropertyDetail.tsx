@@ -9,7 +9,8 @@ import { CalanderDialog } from "@/components/CalanderDialog";
 import { useState } from "react";
 import Gallery from "@/components/Gallery";
 import { useCurrency } from "@/contexts/CurrencyContext";
-import { useProperty } from "@/hooks/useProperties";
+import { useProperty } from "@/hooks/useNewProperties";
+import { format } from "path";
 
 const PropertyDetail = () => {
   const [openCalendar, setOpenCalendar] = useState(false);
@@ -18,7 +19,6 @@ const PropertyDetail = () => {
   const { data: property, isLoading, isError } = useProperty(id || "the-aurum");
   const { formatAmount } = useCurrency();
 
-  console.log(property);
   const handleRequest = (idx: number) => {
     if (requested.includes(idx)) return;
 
@@ -222,7 +222,13 @@ const PropertyDetail = () => {
                   {spec.label}
                 </span>
                 <span className="text-foreground font-medium">
-                  {spec.value}
+                  {spec.label === "Minimum Investment" ? (
+                    <span>
+                      {formatAmount(Number(spec.value.replace(/[^0-9]/g, "")))}
+                    </span>
+                  ) : (
+                    <span>{spec.value}</span>
+                  )}
                 </span>
               </motion.div>
             ))}
@@ -282,7 +288,13 @@ const PropertyDetail = () => {
                   </span>
                 </div>
                 <p className="text-3xl font-light text-foreground mb-2">
-                  {item.value}
+                  {item.label === "Market Size by Year" ? (
+                    <span>
+                      {formatAmount(Number(item.value.replace(/[^0-9]/g, "")))}
+                    </span>
+                  ) : (
+                    <span>{item.value}</span>
+                  )}
                 </p>
                 <p className="text-muted-foreground text-sm">{item.note}</p>
               </motion.div>

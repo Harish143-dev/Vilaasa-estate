@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import intelligenceImage from "@/assets/intelligence-abstract.jpg";
+import intelligenceImage from "@/assets/Intelligent.jpg";
 
 export const FilterSection = () => {
   return (

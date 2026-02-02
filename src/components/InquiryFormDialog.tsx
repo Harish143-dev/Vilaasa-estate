@@ -124,20 +124,52 @@ export const InquiryFormDialog = ({
 
     setIsSubmitting(true);
 
+    try {
+      // Simulate form submission for N8N webhook
+      const response = await fetch(
+        "https://automate.eyelevelstudio.in/webhook/otp-generation",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ ...formData }),
+        },
+      );
+
+      const data = await response.json();
+      if (!data.success) {
+        toast({
+          title: "Submission Error",
+          description:
+            "There was an error submitting your inquiry. Please try again later.",
+          variant: "destructive",
+        });
+      } else {
+        setStep("otp");
+        toast({
+          title: "OTP Sent",
+          description: `${data.message} in your email ${formData.email}`,
+        });
+      }
+    } catch (error) {
+      console.error("Error during form submission:", error);
+      toast({
+        title: "Submission Error",
+        description:
+          "There was an error submitting your inquiry. Please try again later.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+
     // Simulate OTP generation (4-6 digits)
-    const newOtp = Math.floor(100000 + Math.random() * 900000).toString();
-    setGeneratedOtp(newOtp);
+    // const newOtp = Math.floor(100000 + Math.random() * 900000).toString();
+    // setGeneratedOtp(newOtp);
 
     // Simulate sending OTP
     await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    setIsSubmitting(false);
-    setStep("otp");
-
-    toast({
-      title: "OTP Sent",
-      description: `A verification code has been sent to ${formData.phone}. (Demo OTP: ${newOtp})`,
-    });
   };
 
   const handleOtpVerify = async () => {
@@ -151,58 +183,114 @@ export const InquiryFormDialog = ({
     }
 
     setIsSubmitting(true);
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    // Get otp and sent n8n webhook for verification
+    try {
+      const response = await fetch(
+        "https://automate.eyelevelstudio.in/webhook/otp-verify",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            otp: Number(otp),
+            email: formData.email,
+          }),
+        },
+      );
+      const data = await response.json();
 
-    // Simulated OTP verification - accept any 6-digit code for demo
-    if (otp === generatedOtp || otp.length === 6) {
-      setIsSubmitting(false);
-      setStep("success");
-
-      toast({
-        title: "Verified Successfully",
-        description: "Redirecting to project details...",
-      });
-
-      // Redirect after a short delay
-      setTimeout(() => {
-        onOpenChange(false);
-        if (projectId) {
-          if (formData.investmentType === "real-estate") {
-            navigate(`/property/${projectId}`);
-          } else {
-            navigate(`/franchise/${projectId}`);
-          }
-        }
-        // Reset form
-        setStep("form");
-        setFormData({
-          name: "",
-          phone: "",
-          phoneCountryCode: "+91",
-          email: "",
-          investmentType: projectType || "",
-          investmentRange: "",
+      if (!data.success) {
+        toast({
+          title: "Verification Error",
+          description:
+            `${data.message}` ||
+            "The OTP you entered is incorrect. Please try again.",
+          variant: "destructive",
         });
-        setOtp("");
-      }, 1500);
-    } else {
-      setIsSubmitting(false);
+      } else {
+        setStep("success");
+        toast({
+          title: "Verified Successfully",
+          description: "Redirecting to project details...",
+        });
+
+        // Redirect after a short delay
+        setTimeout(() => {
+          onOpenChange(false);
+          if (projectId) {
+            if (projectType === "real-estate") {
+              navigate(`/property/${projectId}`);
+            } else {
+              navigate(`/franchise/${projectId}`);
+            }
+          }
+          // Reset form
+          setStep("form");
+          setFormData({
+            name: "",
+            phone: "",
+            phoneCountryCode: "+91",
+            email: "",
+            investmentType: projectType || "",
+            investmentRange: "",
+          });
+          setOtp("");
+        }, 1500);
+      }
+    } catch (error) {
+      console.error("Error during OTP verification:", error);
       toast({
-        title: "Invalid OTP",
-        description: "The OTP you entered is incorrect. Please try again.",
+        title: "Verification Error",
+        description:
+          "There was an error verifying your OTP. Please try again later.",
         variant: "destructive",
       });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   const handleResendOtp = async () => {
-    const newOtp = Math.floor(100000 + Math.random() * 900000).toString();
-    setGeneratedOtp(newOtp);
+    setIsSubmitting(true);
+    setOtp("");
+    try {
+      const response = await fetch(
+        "https://automate.eyelevelstudio.in/webhook/otp-generation",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ ...formData }),
+        },
+      );
 
-    toast({
-      title: "OTP Resent",
-      description: `A new verification code has been sent. (Demo OTP: ${newOtp})`,
-    });
+      const data = await response.json();
+      if (!data.success) {
+        toast({
+          title: "Resend Error",
+          description:
+            "There was an error resending OTP. Please try again later.",
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "OTP Resent",
+          description: `${data.message} in your email ${formData.email}`,
+        });
+      }
+    } catch (error) {
+      console.error("Error during OTP resend:", error);
+      toast({
+        title: "Resend Error",
+        description:
+          "There was an error resending OTP. Please try again later.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
