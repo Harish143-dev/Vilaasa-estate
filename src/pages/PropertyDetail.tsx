@@ -19,6 +19,8 @@ const PropertyDetail = () => {
   const { data: property, isLoading, isError } = useProperty(id || "the-aurum");
   const { formatAmount } = useCurrency();
 
+  console.log(property)
+
   const handleRequest = (idx: number) => {
     if (requested.includes(idx)) return;
 

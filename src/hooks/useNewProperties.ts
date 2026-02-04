@@ -102,14 +102,47 @@ export function useProperties() {
 
 function transformToDetail(product: SaleorProduct): PropertyDetail {
   const price = getProductPrice(product);
-  const configuration =
-    getAttributeValue(product.attributes, "configuration") || "";
-  const totalArea = getAttributeValue(product.attributes, "total-area") || "";
-  const amenities = getAttributeValues(product.attributes, "amenities");
-  const amenityDescriptions = getAttributeValues(
-    product.attributes,
-    "amenities-description",
-  );
+
+  const amenities = getAttributeValues(product.attributes, "amenities") || [];
+  const amenityDescriptions =
+    getAttributeValues(product.attributes, "amenities-description") || [];
+
+  const atGlanceTitle =
+    getAttributeValues(product.attributes, "at-glance-title") || [];
+  const atGlanceDescription =
+    getAttributeValues(product.attributes, "at-glance-description") || [];
+
+  const specs = atGlanceTitle
+    .map((label, i) => {
+      const value = atGlanceDescription[i];
+      if (!label || !value) return null;
+      return { label, value };
+    })
+    .filter(Boolean) as { label: string; value: string }[];
+
+  const variants = product.variants ?? [];
+  const configurations = variants.map((variant) => ({
+    type: variant.name || "Configuration",
+    area: variant.sku || "3,000 Sq. Ft.",
+    price: variant.pricing?.price?.gross?.amount ?? price, // fallback
+  }));
+
+  const media = product.media ?? [];
+  const galleryImages =
+    media.length > 0
+      ? media.map((m, index) => ({
+          name: `${product.name} Image ${index + 1}`,
+          description: m.alt || "Property View",
+          image: m.url,
+        }))
+      : [
+          {
+            name: "Main Residence",
+            description: "Exterior View",
+            image:
+              DEFAULT_PROPERTY_IMAGES[product.slug] || DEFAULT_PROPERTY_IMAGE,
+          },
+        ];
 
   return {
     id: product.slug,
@@ -118,11 +151,10 @@ function transformToDetail(product: SaleorProduct): PropertyDetail {
     country: getAttributeValue(product.attributes, "country") || "",
     type: product.productType?.name || "Residential",
     price,
-
     priceValue: `$${(price / 1_000_000).toFixed(1)}M+`,
     status: getAttributeValue(product.attributes, "status") || "Available",
     heroImage:
-      product.media?.[0]?.url ||
+      media?.[0]?.url ||
       DEFAULT_PROPERTY_IMAGES[product.slug] ||
       DEFAULT_PROPERTY_IMAGE,
     brochure: getFileAttributeUrl(product.attributes, "catalogue") || "",
@@ -141,31 +173,8 @@ function transformToDetail(product: SaleorProduct): PropertyDetail {
         getAttributeValue(product.attributes, "verdict-designation") ||
         "Investment Advisory",
     },
-    specs: [
-      {
-        label: "Property Type",
-        value:
-          getAttributeValue(product.attributes, "property-type") ||
-          "Residential",
-      },
-      {
-        label: "Location",
-        value: getAttributeValue(product.attributes, "location") || "Unknown",
-      },
-      {
-        label: "Minimum Investment",
-        value: getAttributeValue(product.attributes, "min-Investment") || "N/A",
-      },
-      {
-        label: "Projected IRR",
-        value: getAttributeValue(product.attributes, "project-irr") || "N/A",
-      },
-      {
-        label: "Industry Growth",
-        value:
-          getAttributeValue(product.attributes, "industry-growth") || "N/A",
-      },
-    ],
+
+    specs,
     financials: [
       {
         label: "Projected IRR Returns",
@@ -190,50 +199,30 @@ function transformToDetail(product: SaleorProduct): PropertyDetail {
         note: "With standard financing terms.",
       },
     ],
-    configurations: product.variants.map((variant) => ({
-      type: variant.name, // "3 BHK Wellness Villa"
-      area: variant.sku || "3,000 Sq. Ft.",
-      price: variant.pricing?.price?.gross?.amount ?? price, // fallback
-    })),
 
-    galleryImages: product.media?.map((m, index) => ({
-      name: `${product.name} Image ${index + 1}`,
-      description: m.alt || "Property View",
-      image: m.url,
-    })) || [
-      {
-        name: "Main Residence",
-        description: "Exterior View",
-        image: DEFAULT_PROPERTY_IMAGES[product.slug] || DEFAULT_PROPERTY_IMAGE,
-      },
-    ],
+    configurations,
+    galleryImages,
+
     amenities: amenities.map((name, index) => {
-      const lower = name.toLowerCase();
+      const lower = (name || "").toLowerCase();
       let icon = "star";
 
-      if (lower.includes("pool")) {
-        icon = "pool";
-      } else if (lower.includes("fitness") || lower.includes("gym")) {
+      if (lower.includes("pool")) icon = "pool";
+      else if (lower.includes("fitness") || lower.includes("gym"))
         icon = "fitness_center";
-      } else if (lower.includes("spa") || lower.includes("wellness")) {
+      else if (lower.includes("spa") || lower.includes("wellness"))
         icon = "spa";
-      } else if (lower.includes("security")) {
-        icon = "security";
-      } else if (lower.includes("concierge")) {
-        icon = "room_service";
-      } else if (lower.includes("parking")) {
-        icon = "local_parking";
-      } else if (lower.includes("smart")) {
-        icon = "settings_remote";
-      } else if (lower.includes("garden") || lower.includes("green")) {
+      else if (lower.includes("security")) icon = "security";
+      else if (lower.includes("concierge")) icon = "room_service";
+      else if (lower.includes("parking")) icon = "local_parking";
+      else if (lower.includes("smart")) icon = "settings_remote";
+      else if (lower.includes("garden") || lower.includes("green"))
         icon = "yard";
-      } else if (lower.includes("house") || lower.includes("home")) {
-        icon = "home";
-      } else if (lower.includes("public") || lower.includes("helipad")) {
-        icon = "Helicopter";
-      } else if (lower.includes("party") || lower.includes("club")) {
-        icon = "club";
-      }
+      else if (lower.includes("house") || lower.includes("home")) icon = "home";
+      else if (lower.includes("public") || lower.includes("helipad"))
+        icon = "helicopter"; // use consistent icon name
+      else if (lower.includes("party") || lower.includes("club"))
+        icon = "celebration";
 
       return {
         name,
@@ -241,6 +230,7 @@ function transformToDetail(product: SaleorProduct): PropertyDetail {
         description: amenityDescriptions[index] || "Premium lifestyle amenity.",
       };
     }),
+
     nearbyLocations: [],
   };
 }
