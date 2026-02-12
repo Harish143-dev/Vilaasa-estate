@@ -77,7 +77,7 @@ function transformToListItem(product: SaleorProduct): PropertyListItem {
     type: product.productType?.name || "Residential",
     roi: getAttributeValue(product.attributes, "rental-yield") || "3-5%",
     status: getAttributeValue(product.attributes, "status") || "Available",
-    features: ["Premium Location", "Luxury Amenities"],
+    features: getAttributeValues(product.attributes, "features") || ["Premium Location", "Luxury Amenities"],
     image:
       product.media?.[0]?.url ||
       DEFAULT_PROPERTY_IMAGES[product.slug] ||
@@ -144,6 +144,82 @@ function transformToDetail(product: SaleorProduct): PropertyDetail {
           },
         ];
 
+  // financial
+  const financialTitle =
+    getAttributeValues(product.attributes, "financial-title") ?? [];
+  const financialValue =
+    getAttributeValues(product.attributes, "financial-value") ?? [];
+  const financialDescription =
+    getAttributeValues(product.attributes, "financial-description") ?? [];
+
+  const maxLen = Math.max(
+    financialTitle.length,
+    financialValue.length,
+    financialDescription.length,
+  );
+
+  const financials = Array.from({ length: maxLen })
+    .map((_, i) => {
+      const label = financialTitle[i]?.trim();
+      const value = financialValue[i]?.trim();
+      const note = financialDescription[i]?.trim();
+
+      if (!label || !value) return null;
+
+      const lower = label.toLowerCase();
+      let icon = "payments"; // default icon
+
+      if (lower.includes("irr")) icon = "trending_up";
+      else if (lower.includes("return")) icon = "assessment";
+      else if (lower.includes("growth")) icon = "show_chart";
+      else if (lower.includes("yield")) icon = "savings";
+      else if (lower.includes("price") || lower.includes("cost"))
+        icon = "currency_rupee";
+      else if (lower.includes("valuation")) icon = "balance";
+      else if (lower.includes("market")) icon = "bar_chart";
+      else if (lower.includes("investment")) icon = "insights";
+      else if (lower.includes("roi")) icon = "percent";
+      else if (lower.includes("rent")) icon = "home_work";
+
+      return {
+        label,
+        value,
+        note: note || "",
+        icon,
+      };
+    })
+    .filter(Boolean) as {
+    label: string;
+    value: string;
+    note: string;
+    icon: string;
+  }[];
+
+  const googleMapLink =
+    getAttributeValue(product.attributes, "google-map-link") || "";
+
+  const nearbyLocationsTitle =
+    getAttributeValues(product.attributes, "near-by-location") ?? [];
+
+  const nearbyLocationsDistance =
+    getAttributeValues(product.attributes, "duration-of-location") ?? [];
+
+  const maxLen1 = Math.max(
+    nearbyLocationsTitle.length,
+    nearbyLocationsDistance.length,
+  );
+
+  const nearbyLocations = Array.from({ length: maxLen1 })
+    .map((_, i) => {
+      const name = nearbyLocationsTitle[i]?.trim();
+      const distance = nearbyLocationsDistance[i]?.trim();
+
+      if (!name || !distance) return null;
+
+      return { name, distance };
+    })
+    .filter(Boolean) as { name: string; distance: string }[];
+
   return {
     id: product.slug,
     name: product.name,
@@ -175,31 +251,8 @@ function transformToDetail(product: SaleorProduct): PropertyDetail {
     },
 
     specs,
-    financials: [
-      {
-        label: "Projected IRR Returns",
-        icon: "trending_up",
-        value: getAttributeValue(product.attributes, "project-irr") || "N/A",
-        trend: "up",
-        note: "Based on current market analysis.",
-      },
-      {
-        label: "Market Size by Year",
-        icon: "monitoring",
-        value: getAttributeValue(product.attributes, "min-Investment") || "N/A",
-        trend: "up",
-        note: "Historical growth trajectory.",
-      },
-      {
-        label: "Anual Industry Growth",
-        icon: "timelapse",
-        value:
-          getAttributeValue(product.attributes, "industry-growth") || "N/A",
-        trend: "neutral",
-        note: "With standard financing terms.",
-      },
-    ],
 
+    financials,
     configurations,
     galleryImages,
 
@@ -230,8 +283,8 @@ function transformToDetail(product: SaleorProduct): PropertyDetail {
         description: amenityDescriptions[index] || "Premium lifestyle amenity.",
       };
     }),
-
-    nearbyLocations: [],
+    googleMapLink,
+    nearbyLocations,
   };
 }
 

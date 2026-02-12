@@ -7,7 +7,7 @@ import { DiamondIcon } from "@/components/icons/DiamondIcon";
 import { InquiryFormDialog } from "@/components/InquiryFormDialog";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import { Link } from "react-router-dom";
-import { useProperties } from "@/hooks/useProperties";
+import { useProperties } from "@/hooks/useNewProperties";
 
 const benefits = [
   {
@@ -48,6 +48,7 @@ const International = () => {
   const internaltional = properties.filter(
     (p) => p.franchiseCategory === "International",
   );
+
   const filteredProperties = internaltional.filter((p) => {
     if (activeType && p.type !== activeType) return false;
     return true;
@@ -77,8 +78,8 @@ const International = () => {
   }, [currentVideoIndex]);
 
   const propertyTypes = useMemo(() => {
-    return Array.from(new Set(properties.map((p) => p.type)));
-  }, [properties]);
+    return Array.from(new Set(internaltional.map((p) => p.type)));
+  }, [internaltional]);
 
   return (
     <div className="overflow-x-hidden bg-background">
@@ -150,7 +151,7 @@ const International = () => {
       {/* Collection Section */}
       <section className="py-24 md:py-32 px-4 md:px-10 bg-[#0c1a14]">
         <div className="max-w-[1280px] mx-auto">
-          <motion.div
+          {/* <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -175,7 +176,7 @@ const International = () => {
               Fully vetted for legal clarity and rental yield, our portfolio
               represents the pinnacle of desert modernism and waterfront luxury.
             </p>
-          </motion.div>
+          </motion.div> */}
 
           {/* Lifestyle Filters */}
           <div className="flex flex-wrap gap-3 mb-5 items-center">
@@ -250,8 +251,13 @@ const International = () => {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.5, delay: index * 0.1 }}
                     >
-                      <Link
-                        to={`/property/${property.id}`}
+                      <button
+                        onClick={() =>
+                          handlePropertyClick({
+                            id: property.id,
+                            name: property.name,
+                          })
+                        }
                         className="group block overflow-hidden rounded-sm border border-border bg-card hover:border-primary/50 transition-all w-full text-left"
                       >
                         <div className="relative aspect-[4/3] overflow-hidden">
@@ -327,7 +333,7 @@ const International = () => {
                             </button>
                           </div>
                         </div>
-                      </Link>
+                      </button>
                     </motion.div>
                   ))}
                 </div>

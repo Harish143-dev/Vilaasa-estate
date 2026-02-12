@@ -278,18 +278,18 @@ export function useFranchiseList() {
       });
 
       // DEBUG: confirm attributes are coming
-      console.log(
-        "FRANCHISE ATTRIBUTES 👉",
-        data.products.edges
-          .filter((e) => e.node.category?.name === "Franchises")
-          .map((e) => ({
-            name: e.node.name,
-            attributes: e.node.attributes.map((a) => ({
-              slug: a.attribute.slug,
-              values: a.values.map((v) => v.name),
-            })),
-          })),
-      );
+      // console.log(
+      //   "FRANCHISE ATTRIBUTES 👉",
+      //   data.products.edges
+      //     .filter((e) => e.node.category?.name === "Franchises")
+      //     .map((e) => ({
+      //       name: e.node.name,
+      //       attributes: e.node.attributes.map((a) => ({
+      //         slug: a.attribute.slug,
+      //         values: a.values.map((v) => v.name),
+      //       })),
+      //     })),
+      // );
 
       return data.products.edges
         .filter((e) => e.node.category?.name === "Franchises")

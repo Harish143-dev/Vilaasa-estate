@@ -22,7 +22,7 @@ export interface PropertyFinancial {
   label: string;
   icon: string;
   value: string;
-  trend: string;
+  trend?: string;
   note: string;
 }
 
@@ -76,6 +76,7 @@ export interface PropertyDetail {
   galleryImages: PropertyGalleryImage[];
   amenities: PropertyAmenity[];
   nearbyLocations: PropertyNearbyLocation[];
+  googleMapLink: string
 }
 
 // Default placeholder images for properties

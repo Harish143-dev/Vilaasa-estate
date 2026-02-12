@@ -11,6 +11,7 @@ import Gallery from "@/components/Gallery";
 import { useCurrency } from "@/contexts/CurrencyContext";
 import { useProperty } from "@/hooks/useNewProperties";
 import { format } from "path";
+import { P } from "node_modules/framer-motion/dist/types.d-DagZKalS";
 
 const PropertyDetail = () => {
   const [openCalendar, setOpenCalendar] = useState(false);
@@ -19,7 +20,7 @@ const PropertyDetail = () => {
   const { data: property, isLoading, isError } = useProperty(id || "the-aurum");
   const { formatAmount } = useCurrency();
 
-  console.log(property)
+  // console.log(property);
 
   const handleRequest = (idx: number) => {
     if (requested.includes(idx)) return;
@@ -205,207 +206,211 @@ const PropertyDetail = () => {
       </section>
 
       {/* At a Glance */}
-      <section className="py-20 px-4 md:px-10">
-        <div className="max-w-[1280px] mx-auto">
-          <h2 className="text-2xl font-light text-foreground mb-8">
-            At a Glance
-          </h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
-            {property.specs.map((spec, idx) => (
-              <motion.div
-                key={spec.label}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: idx * 0.1 }}
-                className="flex flex-col gap-2 p-4 bg-card rounded border border-border"
+      {property.specs.length > 0 && (
+        <section className="py-20 px-4 md:px-10">
+          <div className="max-w-[1280px] mx-auto">
+            <h2 className="text-2xl font-light text-foreground mb-8">
+              At a Glance
+            </h2>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+              {property.specs.map((spec, idx) => (
+                <motion.div
+                  key={spec.label}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: idx * 0.1 }}
+                  className="flex flex-col gap-2 p-4 bg-card rounded border border-border"
+                >
+                  <span className="text-muted-foreground text-xs uppercase tracking-wider">
+                    {spec.label}
+                  </span>
+                  <span className="text-foreground font-medium">
+                    {spec.label === "Min Investment" ? (
+                      <span>{formatAmount(Number(spec.value))}</span>
+                    ) : (
+                      <span>{spec.value}</span>
+                    )}
+                  </span>
+                </motion.div>
+              ))}
+            </div>
+            {property.brochure && (
+              <a
+                href={property.brochure}
+                target="_blank"
+                rel="noopener noreferrer"
               >
-                <span className="text-muted-foreground text-xs uppercase tracking-wider">
-                  {spec.label}
-                </span>
-                <span className="text-foreground font-medium">
-                  {spec.label === "Minimum Investment" ? (
-                    <span>
-                      {formatAmount(Number(spec.value.replace(/[^0-9]/g, "")))}
-                    </span>
-                  ) : (
-                    <span>{spec.value}</span>
-                  )}
-                </span>
-              </motion.div>
-            ))}
+                <Button variant="outline" className="mt-8 gap-2">
+                  <span className="material-symbols-outlined text-lg">
+                    download
+                  </span>
+                  Download Brochure
+                </Button>
+              </a>
+            )}
           </div>
-          {property.brochure && (
-            <a
-              href={property.brochure}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Button variant="outline" className="mt-8 gap-2">
-                <span className="material-symbols-outlined text-lg">
-                  download
-                </span>
-                Download Brochure
-              </Button>
-            </a>
-          )}
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* Financial Intelligence */}
-      <section className="py-20 px-4 md:px-10 bg-[#0c1a14]">
-        <div className="max-w-[1280px] mx-auto">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-12">
-            <div>
-              <span className="text-gold-accent/60 uppercase tracking-[0.2em] text-xs font-bold">
-                Financial Intelligence
-              </span>
-              <h2 className="text-3xl font-light text-foreground mt-2">
-                Investment Analysis
-              </h2>
-              <p className="text-muted-foreground mt-2">
-                Based on Q3 2024 market data for prime luxury real estate.
-              </p>
-            </div>
-            <div className="flex items-center gap-2 text-muted-foreground text-sm">
-              <span className="material-symbols-outlined text-lg">info</span>
-              Data verified by Vilaasa
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {property.financials.map((item, idx) => (
-              <motion.div
-                key={item.label}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: idx * 0.1 }}
-                className="p-6 bg-background/50 rounded-lg border border-border"
-              >
-                <div className="flex items-center gap-2 text-gold-accent mb-4">
-                  <span className="text-sm">{item.label}</span>
-                  <span className="material-symbols-outlined text-lg">
-                    {item.icon}
-                  </span>
-                </div>
-                <p className="text-3xl font-light text-foreground mb-2">
-                  {item.label === "Market Size by Year" ? (
-                    <span>
-                      {formatAmount(Number(item.value.replace(/[^0-9]/g, "")))}
-                    </span>
-                  ) : (
-                    <span>{item.value}</span>
-                  )}
+      {property.financials.length > 0 && (
+        <section className="py-20 px-4 md:px-10 bg-[#0c1a14]">
+          <div className="max-w-[1280px] mx-auto">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-12">
+              <div>
+                <span className="text-gold-accent/60 uppercase tracking-[0.2em] text-xs font-bold">
+                  Financial Intelligence
+                </span>
+                <h2 className="text-3xl font-light text-foreground mt-2">
+                  Investment Analysis
+                </h2>
+                <p className="text-muted-foreground mt-2">
+                  Based on Q3 2024 market data for prime luxury real estate.
                 </p>
-                <p className="text-muted-foreground text-sm">{item.note}</p>
-              </motion.div>
-            ))}
+              </div>
+              <div className="flex items-center gap-2 text-muted-foreground text-sm">
+                <span className="material-symbols-outlined text-lg">info</span>
+                Data verified by Vilaasa
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {property.financials.map((item, idx) => (
+                <motion.div
+                  key={item.label}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: idx * 0.1 }}
+                  className="p-6 bg-background/50 rounded-lg border border-border"
+                >
+                  <div className="flex items-center gap-2 text-gold-accent mb-4">
+                    <span className="text-sm">{item.label}</span>
+                    <span className="material-symbols-outlined text-lg">
+                      {item.icon}
+                    </span>
+                  </div>
+                  <p className="text-3xl font-light text-foreground mb-2">
+                    {item.label === "Market Size by Year" ? (
+                      <span>{formatAmount(Number(item.value))}</span>
+                    ) : (
+                      <span>{item.value}</span>
+                    )}
+                  </p>
+                  <p className="text-muted-foreground text-sm">{item.note}</p>
+                </motion.div>
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* Pricing Table */}
-      <section className="py-20 px-4 md:px-10">
-        <div className="max-w-[1280px] mx-auto">
-          <h2 className="text-2xl font-light text-foreground mb-8">
-            Pricing & Configurations
-          </h2>
-          <div className="overflow-x-auto">
-            <table className="w-full border-collapse">
-              <thead>
-                <tr className="border-b border-border text-left">
-                  <th className="py-4 px-4 text-muted-foreground text-sm font-medium">
-                    Unit Type
-                  </th>
-                  <th className="py-4 px-4 text-muted-foreground text-sm font-medium">
-                    Carpet Area
-                  </th>
+      {property.configurations.length > 0 && (
+        <section className="py-20 px-4 md:px-10">
+          <div className="max-w-[1280px] mx-auto">
+            <h2 className="text-2xl font-light text-foreground mb-8">
+              Pricing & Configurations
+            </h2>
+            <div className="overflow-x-auto">
+              <table className="w-full border-collapse">
+                <thead>
+                  <tr className="border-b border-border text-left">
+                    <th className="py-4 px-4 text-muted-foreground text-sm font-medium">
+                      Unit Type
+                    </th>
+                    <th className="py-4 px-4 text-muted-foreground text-sm font-medium">
+                      Carpet Area
+                    </th>
 
-                  <th className="py-4 px-4 text-muted-foreground text-sm font-medium">
-                    Price
-                  </th>
-                  <th className="py-4 px-4 text-muted-foreground text-sm font-medium">
-                    Action
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {property.configurations.map((config, idx: number) => {
-                  const isRequested = requested.includes(idx);
+                    <th className="py-4 px-4 text-muted-foreground text-sm font-medium">
+                      Price
+                    </th>
+                    <th className="py-4 px-4 text-muted-foreground text-sm font-medium">
+                      Action
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {property.configurations.map((config, idx: number) => {
+                    const isRequested = requested.includes(idx);
 
-                  return (
-                    <tr
-                      key={idx}
-                      className="border-b border-border/50 hover:bg-card/50 transition-colors"
-                    >
-                      <td className="py-4 px-4 text-foreground font-medium">
-                        {config.type}
-                      </td>
+                    return (
+                      <tr
+                        key={idx}
+                        className="border-b border-border/50 hover:bg-card/50 transition-colors"
+                      >
+                        <td className="py-4 px-4 text-foreground font-medium">
+                          {config.type}
+                        </td>
 
-                      <td className="py-4 px-4 text-muted-foreground">
-                        {config.area}
-                      </td>
+                        <td className="py-4 px-4 text-muted-foreground">
+                          {config.area}
+                        </td>
 
-                      <td className="py-4 px-4 text-foreground">
-                        {formatAmount(config.price)}
-                      </td>
+                        <td className="py-4 px-4 text-foreground">
+                          {formatAmount(config.price)}
+                        </td>
 
-                      <td className="py-4 px-4">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="text-primary"
-                          onClick={() => handleRequest(idx)}
-                          disabled={isRequested}
-                        >
-                          {isRequested
-                            ? "Cost Sheet Requested"
-                            : "Request Cost Sheet"}
-                        </Button>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+                        <td className="py-4 px-4">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="text-primary"
+                            onClick={() => handleRequest(idx)}
+                            disabled={isRequested}
+                          >
+                            {isRequested
+                              ? "Cost Sheet Requested"
+                              : "Request Cost Sheet"}
+                          </Button>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* Floor Plans */}
-      <Gallery property={property} />
+      {property.galleryImages && <Gallery property={property} />}
 
       {/* Amenities */}
-      <section className="py-20 px-4 md:px-10">
-        <div className="max-w-[1280px] mx-auto">
-          <h2 className="text-2xl font-light text-foreground mb-8">
-            Amenities
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {property.amenities.map((amenity, idx) => (
-              <motion.div
-                key={amenity.name}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: idx * 0.1 }}
-                className="p-6 bg-card rounded-lg border border-border hover:border-primary/50 transition-colors"
-              >
-                <span className="material-symbols-outlined text-3xl text-primary mb-4 block">
-                  {amenity.icon}
-                </span>
-                <h3 className="text-foreground font-medium mb-2">
-                  {amenity.name}
-                </h3>
-                <p className="text-muted-foreground text-sm">
-                  {amenity.description}
-                </p>
-              </motion.div>
-            ))}
+      {property.amenities.length > 0 && (
+        <section className="py-20 px-4 md:px-10">
+          <div className="max-w-[1280px] mx-auto">
+            <h2 className="text-2xl font-light text-foreground mb-8">
+              Amenities
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {property.amenities.map((amenity, idx) => (
+                <motion.div
+                  key={amenity.name}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: idx * 0.1 }}
+                  className="p-6 bg-card rounded-lg border border-border hover:border-primary/50 transition-colors"
+                >
+                  <span className="material-symbols-outlined text-3xl text-primary mb-4 block">
+                    {amenity.icon}
+                  </span>
+                  <h3 className="text-foreground font-medium mb-2">
+                    {amenity.name}
+                  </h3>
+                  <p className="text-muted-foreground text-sm">
+                    {amenity.description}
+                  </p>
+                </motion.div>
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* Location */}
       <section className="py-20 px-4 md:px-10 bg-card border-y border-border">
@@ -419,9 +424,18 @@ const PropertyDetail = () => {
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2 aspect-video bg-background rounded-lg border border-border flex items-center justify-center">
-              <p className="text-muted-foreground">
-                Interactive Map Loading...
-              </p>
+              {property.googleMapLink ? (
+                <iframe
+                  title="Google Map"
+                  src={property.googleMapLink}
+                  className="w-full h-full border-0 object-cover"
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  allowFullScreen
+                />
+              ) : (
+                <p>Sorry, this property doesn’t have a map link yet.</p>
+              )}
             </div>
             <div className="flex flex-col gap-4">
               {property.nearbyLocations.map((loc) => (

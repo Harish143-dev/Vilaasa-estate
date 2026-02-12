@@ -1055,7 +1055,7 @@ const FranchiseDetail = () => {
   const [selectedTier, setSelectedTier] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  console.log("Franchise Data:", franchise);
+  // console.log("Franchise Data:", franchise);
 
   if (isLoading) {
     return (
