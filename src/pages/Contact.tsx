@@ -78,7 +78,7 @@ const Contact = () => {
 
     try {
       const response = await fetch(
-        "https://automate.eyelevelstudio.in/webhook/contact-form",
+        "https://automate.eyelevelstudio.in/webhook/contact",
         {
           method: "POST",
           headers: {
@@ -215,11 +215,11 @@ const Contact = () => {
 
               {/* Dubai */}
               <div className="p-6 bg-card rounded-lg border border-border">
-                <span className="text-gold-accent text-xs uppercase tracking-widest font-bold">
+                <span className="text-accent text-xs uppercase tracking-widest font-bold">
                   Dubai, UAE
                 </span>
                 <h3 className="text-foreground font-medium mt-3 mb-2">
-                  HJ Group LLC
+                  HJ Group
                 </h3>
                 <p className="text-muted-foreground text-sm leading-relaxed">
                   1104, SILVER TOWER, BUSINESS BAY
@@ -230,7 +230,7 @@ const Contact = () => {
                   href="https://maps.app.goo.gl/yfZJ7Y8nPWoMdNuw9"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1 text-gold-accent text-sm mt-4 hover:underline"
+                  className="inline-flex items-center gap-1 text-accent text-sm mt-4 hover:underline"
                 >
                   Get Directions
                   <span className="material-symbols-outlined text-sm">
