@@ -251,13 +251,8 @@ const International = () => {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.5, delay: index * 0.1 }}
                     >
-                      <button
-                        onClick={() =>
-                          handlePropertyClick({
-                            id: property.id,
-                            name: property.name,
-                          })
-                        }
+                      <Link
+                        to={`/property/${property.id}`}
                         className="group block overflow-hidden rounded-sm border border-border bg-card hover:border-primary/50 transition-all w-full text-left"
                       >
                         <div className="relative aspect-[4/3] overflow-hidden">
@@ -320,7 +315,7 @@ const International = () => {
                                     Returns
                                   </p>
                                   <p className="text-sm font-medium text-gold">
-                                    {property.roi}
+                                    {property.return}
                                   </p>
                                 </div>
                               </>
@@ -333,7 +328,7 @@ const International = () => {
                             </button>
                           </div>
                         </div>
-                      </button>
+                      </Link>
                     </motion.div>
                   ))}
                 </div>
@@ -480,13 +475,13 @@ const International = () => {
 
       <Footer />
 
-      <InquiryFormDialog
+      {/* <InquiryFormDialog
         open={inquiryOpen}
         onOpenChange={setInquiryOpen}
         projectType="real-estate"
         projectId={selectedProperty?.id}
         projectName={selectedProperty?.name}
-      />
+      /> */}
     </div>
   );
 };

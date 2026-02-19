@@ -11,6 +11,7 @@ export interface PropertyListItem {
   features: string[];
   image: string;
   franchiseCategory?: string;
+  return?:string
 }
 
 export interface PropertySpec {

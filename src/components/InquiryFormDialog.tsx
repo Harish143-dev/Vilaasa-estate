@@ -128,13 +128,14 @@ export const InquiryFormDialog = ({
     try {
       // Simulate form submission for N8N webhook
       const response = await fetch(
-        "https://automate.eyelevelstudio.in/webhook/otp/request",
+        "https://automate.eyelevelstudio.in/webhook-test/otp/request",
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
+            name: formData.name,
             email: formData.email,
           }),
         },
@@ -196,7 +197,7 @@ export const InquiryFormDialog = ({
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            otp: Number(otp),
+            otp: otp,
             email: formData.email,
           }),
         },

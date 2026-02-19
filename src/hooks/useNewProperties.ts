@@ -74,6 +74,7 @@ function transformToListItem(product: SaleorProduct): PropertyListItem {
     name: product.name,
     location: getAttributeValue(product.attributes, "location") || "",
     price: getProductPrice(product),
+    return: getAttributeValue(product.attributes, "project-irr"),
     type: product.productType?.name || "Residential",
     roi: getAttributeValue(product.attributes, "rental-yield") || "3-5%",
     status: getAttributeValue(product.attributes, "status") || "Available",

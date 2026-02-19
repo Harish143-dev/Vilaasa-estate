@@ -202,13 +202,8 @@ const DomesticFranchise = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
               >
-                <button
-                  onClick={() =>
-                    handlePropertyClick({
-                      id: franchise.id,
-                      name: franchise.name,
-                    })
-                  }
+                <Link
+                  to={`/franchise/${franchise.id}`}
                   className="group block overflow-hidden rounded-sm border border-border bg-card hover:border-gold/50 transition-all w-full text-left"
                 >
                   <div className="relative aspect-[4/3] overflow-hidden">
@@ -274,7 +269,7 @@ const DomesticFranchise = () => {
                       </button>
                     </div>
                   </div>
-                </button>
+                </Link>
               </motion.div>
             ))}
           </div>
@@ -295,13 +290,13 @@ const DomesticFranchise = () => {
       <Footer />
 
       {/* Inquiry Form Dialog */}
-      <InquiryFormDialog
+      {/* <InquiryFormDialog
         open={inquiryOpen}
         onOpenChange={setInquiryOpen}
         projectType="franchise"
         projectId={selectedFranchise?.id}
         projectName={selectedFranchise?.name}
-      />
+      /> */}
     </div>
   );
 };
