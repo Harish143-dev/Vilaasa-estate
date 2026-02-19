@@ -16,7 +16,7 @@ const desks: DeskOption[] = [
     label: "India Investment Desk",
     description: "Domestic real estate & land opportunities",
     icon: "location_on",
-    whatsappNumber: "914443570713",
+    whatsappNumber: "917550001123",
     message: "Hello, I'm interested in learning more about investment opportunities in India.",
   },
   {
@@ -24,7 +24,7 @@ const desks: DeskOption[] = [
     label: "Dubai Investment Desk",
     description: "International properties & global assets",
     icon: "public",
-    whatsappNumber: "914443570713", // Placeholder - replace with actual Dubai number
+    whatsappNumber: "917550001123", // Placeholder - replace with actual Dubai number
     message: "Hello, I'm interested in learning more about Dubai investment opportunities.",
   },
   {
@@ -32,7 +32,7 @@ const desks: DeskOption[] = [
     label: "Franchise Support",
     description: "Premium brand franchise investments",
     icon: "storefront",
-    whatsappNumber: "914443570713", // Placeholder - replace with actual Franchise number
+    whatsappNumber: "917550001123", // Placeholder - replace with actual Franchise number
     message: "Hello, I'm interested in learning more about franchise investment opportunities.",
   },
 ];

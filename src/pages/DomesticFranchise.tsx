@@ -262,7 +262,7 @@ const DomesticFranchise = () => {
                         <p className="text-xs text-muted-foreground uppercase tracking-wide">
                           Expected ROI
                         </p>
-                        <p className="text-base font-bold text-primary">
+                        <p className="text-sm font-bold text-primary">
                           {franchise.expectedROI || "N/A"}
                         </p>
                       </div>

@@ -25,6 +25,7 @@ import {
 } from "@/components/ui/input-otp";
 import { useToast } from "@/hooks/use-toast";
 import { CountryCodeSelect } from "./CountryCodeSelect";
+import { formatDate } from "date-fns";
 
 interface InquiryFormDialogProps {
   open: boolean;
@@ -127,18 +128,20 @@ export const InquiryFormDialog = ({
     try {
       // Simulate form submission for N8N webhook
       const response = await fetch(
-        "https://automate.eyelevelstudio.in/webhook/otp-generation",
+        "https://automate.eyelevelstudio.in/webhook/otp/request",
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ ...formData }),
+          body: JSON.stringify({
+            email: formData.email,
+          }),
         },
       );
 
       const data = await response.json();
-      if (!data.success) {
+      if (!data.ok) {
         toast({
           title: "Submission Error",
           description:
@@ -186,7 +189,7 @@ export const InquiryFormDialog = ({
     // Get otp and sent n8n webhook for verification
     try {
       const response = await fetch(
-        "https://automate.eyelevelstudio.in/webhook/otp-verify",
+        "https://automate.eyelevelstudio.in/webhook/otp/verify",
         {
           method: "POST",
           headers: {
@@ -200,7 +203,7 @@ export const InquiryFormDialog = ({
       );
       const data = await response.json();
 
-      if (!data.success) {
+      if (!data.ok) {
         toast({
           title: "Verification Error",
           description:
@@ -256,7 +259,7 @@ export const InquiryFormDialog = ({
     setOtp("");
     try {
       const response = await fetch(
-        "https://automate.eyelevelstudio.in/webhook/otp-generation",
+        "https://automate.eyelevelstudio.in/webhook/otp/resend",
         {
           method: "POST",
           headers: {

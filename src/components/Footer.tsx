@@ -73,13 +73,13 @@ export const Footer = () => {
                 </div>
                 <div className="flex items-center gap-2 text-muted-foreground text-sm">
                   <span className="material-symbols-outlined text-primary text-base">
-                    call
+                    mail
                   </span>
                   <a
                     href="tel:+917550001123"
                     className="hover:text-foreground transition-colors"
                   >
-                    +91 7550001123
+                    vilaasaestates@gmail.com
                   </a>
                 </div>
               </div>
@@ -178,7 +178,7 @@ export const Footer = () => {
           <div className="border-t border-border pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
             <div className="flex flex-col items-center md:items-start gap-1">
               <p className="text-muted-foreground text-xs">
-                © 2024 Vilaasa Estate. All rights reserved.
+                © 2026 Vilaasa Estate. All rights reserved.
               </p>
               <p className="text-muted-foreground/60 text-xs">
                 Website designed by{" "}

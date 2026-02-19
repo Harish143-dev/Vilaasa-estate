@@ -77,7 +77,10 @@ function transformToListItem(product: SaleorProduct): PropertyListItem {
     type: product.productType?.name || "Residential",
     roi: getAttributeValue(product.attributes, "rental-yield") || "3-5%",
     status: getAttributeValue(product.attributes, "status") || "Available",
-    features: getAttributeValues(product.attributes, "features") || ["Premium Location", "Luxury Amenities"],
+    features: getAttributeValues(product.attributes, "features") || [
+      "Premium Location",
+      "Luxury Amenities",
+    ],
     image:
       product.media?.[0]?.url ||
       DEFAULT_PROPERTY_IMAGES[product.slug] ||
@@ -121,11 +124,21 @@ function transformToDetail(product: SaleorProduct): PropertyDetail {
     .filter(Boolean) as { label: string; value: string }[];
 
   const variants = product.variants ?? [];
-  const configurations = variants.map((variant) => ({
-    type: variant.name || "Configuration",
-    area: variant.sku || "3,000 Sq. Ft.",
-    price: variant.pricing?.price?.gross?.amount ?? price, // fallback
-  }));
+
+  const configurations =
+    variants.length > 0
+      ? variants.map((variant) => ({
+          type: variant.name ?? "Standard",
+          area: variant.sku ?? "",
+          price: variant.pricing?.price?.gross?.amount ?? price,
+        }))
+      : [
+          {
+            type: "Standard",
+            area: "",
+            price: price,
+          },
+        ];
 
   const media = product.media ?? [];
   const galleryImages =
@@ -243,7 +256,7 @@ function transformToDetail(product: SaleorProduct): PropertyDetail {
         getAttributeValue(product.attributes, "verdict-message") ||
         "Strong long-term investment opportunity.",
       author:
-        getAttributeValue(product.attributes, "verdict-person-name") ||
+        getAttributeValue(product.attributes, "verdict-name") ||
         "Vilaasa Acquisitions",
       title:
         getAttributeValue(product.attributes, "verdict-designation") ||
@@ -251,7 +264,9 @@ function transformToDetail(product: SaleorProduct): PropertyDetail {
     },
 
     specs,
-
+    visionHeadline:
+      getAttributeValue(product.attributes, "vision-and-concept-title") ||
+      "Timeless elegance reimagined for the discerning few.",
     financials,
     configurations,
     galleryImages,

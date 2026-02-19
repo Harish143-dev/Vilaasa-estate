@@ -97,10 +97,10 @@ const Gallery = ({
                     </button>
                   </div>
 
-                  <h3 className="text-foreground font-medium">{plan.name}</h3>
                   {plan.description && (
-                    <p className="text-muted-foreground text-sm">
-                      {plan.description}
+                    <p className="text-lg">
+                      {plan.description.charAt(0).toUpperCase() +
+                        plan.description.slice(1)}
                     </p>
                   )}
                 </motion.div>

@@ -19,6 +19,8 @@ const PropertyDetail = () => {
   const { id } = useParams<{ id: string }>();
   const { data: property, isLoading, isError } = useProperty(id || "the-aurum");
   const { formatAmount } = useCurrency();
+  const configurations = property?.configurations ?? [];
+  const hasArea = configurations.some((c) => Boolean(c.area));
 
   // console.log(property);
 
@@ -149,7 +151,7 @@ const PropertyDetail = () => {
 
       {/* Concept Section */}
       <section className="py-20 px-4 md:px-10 bg-card border-y border-border">
-        <div className="max-w-[1280px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16">
+        <div className="max-w-[1280px] mx-auto grid grid-cols-1 lg:grid-cols-2 items-center gap-16">
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -160,12 +162,14 @@ const PropertyDetail = () => {
               Concept & Vision
             </span>
             <h2 className="text-3xl md:text-4xl font-light text-foreground">
-              Timeless elegance reimagined for the discerning few.
+              {property.visionHeadline}
             </h2>
             {property.description.map((para, idx) => (
-              <p key={idx} className="text-muted-foreground leading-relaxed">
-                {para}
-              </p>
+              <p
+                key={idx}
+                dangerouslySetInnerHTML={{ __html: para }}
+                className="text-muted-foreground leading-relaxed"
+              />
             ))}
           </motion.div>
 
@@ -188,17 +192,10 @@ const PropertyDetail = () => {
             </p>
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center">
-                <span className="text-primary font-bold">
-                  {property.verdict.author.charAt(0)}
-                </span>
+                <span className="text-primary font-bold">B</span>
               </div>
               <div>
-                <p className="text-foreground font-medium">
-                  {property.verdict.author}
-                </p>
-                <p className="text-muted-foreground text-sm">
-                  {property.verdict.title}
-                </p>
+                <p className="text-foreground font-medium">BxxxxxxA</p>
               </div>
             </div>
           </motion.div>
@@ -313,6 +310,7 @@ const PropertyDetail = () => {
             <h2 className="text-2xl font-light text-foreground mb-8">
               Pricing & Configurations
             </h2>
+
             <div className="overflow-x-auto">
               <table className="w-full border-collapse">
                 <thead>
@@ -320,20 +318,25 @@ const PropertyDetail = () => {
                     <th className="py-4 px-4 text-muted-foreground text-sm font-medium">
                       Unit Type
                     </th>
-                    <th className="py-4 px-4 text-muted-foreground text-sm font-medium">
-                      Carpet Area
-                    </th>
+
+                    {hasArea && (
+                      <th className="py-4 px-4 text-muted-foreground text-sm font-medium">
+                        Area
+                      </th>
+                    )}
 
                     <th className="py-4 px-4 text-muted-foreground text-sm font-medium">
                       Price
                     </th>
+
                     <th className="py-4 px-4 text-muted-foreground text-sm font-medium">
                       Action
                     </th>
                   </tr>
                 </thead>
+
                 <tbody>
-                  {property.configurations.map((config, idx: number) => {
+                  {property.configurations?.map((config, idx) => {
                     const isRequested = requested.includes(idx);
 
                     return (
@@ -342,15 +345,17 @@ const PropertyDetail = () => {
                         className="border-b border-border/50 hover:bg-card/50 transition-colors"
                       >
                         <td className="py-4 px-4 text-foreground font-medium">
-                          {config.type}
+                          {config.type || "-"}
                         </td>
 
-                        <td className="py-4 px-4 text-muted-foreground">
-                          {config.area}
-                        </td>
+                        {hasArea && (
+                          <td className="py-4 px-4 text-muted-foreground">
+                            {config.area ? `${config.area}` : "-"}
+                          </td>
+                        )}
 
                         <td className="py-4 px-4 text-foreground">
-                          {formatAmount(config.price)}
+                          {config.price ? formatAmount(config.price) : "-"}
                         </td>
 
                         <td className="py-4 px-4">
@@ -423,8 +428,8 @@ const PropertyDetail = () => {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-2 aspect-video bg-background rounded-lg border border-border flex items-center justify-center">
-              {property.googleMapLink ? (
+            {property.googleMapLink && (
+              <div className="lg:col-span-2 aspect-video bg-background rounded-lg border border-border flex items-center justify-center">
                 <iframe
                   title="Google Map"
                   src={property.googleMapLink}
@@ -433,10 +438,8 @@ const PropertyDetail = () => {
                   referrerPolicy="no-referrer-when-downgrade"
                   allowFullScreen
                 />
-              ) : (
-                <p>Sorry, this property doesn’t have a map link yet.</p>
-              )}
-            </div>
+              </div>
+            )}
             <div className="flex flex-col gap-4">
               {property.nearbyLocations.map((loc) => (
                 <div

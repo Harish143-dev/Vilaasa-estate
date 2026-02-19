@@ -24,7 +24,7 @@ const Privacy = () => {
               Privacy <span className="italic text-gold-accent">Policy</span>
             </h1>
             <p className="text-muted-foreground text-lg">
-              Effective Date: January 2025
+              Effective Date: January 2026
             </p>
           </motion.div>
         </div>

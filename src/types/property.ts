@@ -77,6 +77,7 @@ export interface PropertyDetail {
   amenities: PropertyAmenity[];
   nearbyLocations: PropertyNearbyLocation[];
   googleMapLink: string
+  visionHeadline: string
 }
 
 // Default placeholder images for properties

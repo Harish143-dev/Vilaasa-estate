@@ -159,7 +159,7 @@ const Contact = () => {
 
       {/* Contact Info & Form */}
       <section className="py-16 px-4 md:px-10">
-        <div className="max-w-[1280px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16">
+        <div className="max-w-[1280px] mx-auto grid grid-cols-1 lg:grid-cols-2 items-center gap-16">
           {/* Left - Contact Info */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
@@ -168,7 +168,7 @@ const Contact = () => {
             className="flex flex-col gap-10"
           >
             {/* Direct Line */}
-            <div className="flex flex-col gap-3">
+            {/* <div className="flex flex-col gap-3">
               <span className="text-muted-foreground text-xs uppercase tracking-widest">
                 Direct Line
               </span>
@@ -181,7 +181,7 @@ const Contact = () => {
               <p className="text-muted-foreground text-sm">
                 Available Mon-Sat, 9:00 AM — 7:00 PM IST
               </p>
-            </div>
+            </div> */}
 
             {/* Office Locations */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -219,15 +219,15 @@ const Contact = () => {
                   Dubai, UAE
                 </span>
                 <h3 className="text-foreground font-medium mt-3 mb-2">
-                  The Opus by Zaha Hadid
+                  HJ Group LLC
                 </h3>
                 <p className="text-muted-foreground text-sm leading-relaxed">
-                  Al A'amal St, Business Bay
+                  1104, SILVER TOWER, BUSINESS BAY
                   <br />
                   Dubai, United Arab Emirates
                 </p>
                 <a
-                  href="https://maps.google.com/?q=The+Opus+Business+Bay+Dubai"
+                  href="https://maps.app.goo.gl/yfZJ7Y8nPWoMdNuw9"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-1 text-gold-accent text-sm mt-4 hover:underline"
@@ -249,7 +249,7 @@ const Contact = () => {
                 href="mailto:concierge@vilaasaestate.com"
                 className="text-primary text-lg hover:underline"
               >
-                info@vilaasaestates.com
+                vilaasaestates@gmail.com
               </a>
             </div>
           </motion.div>

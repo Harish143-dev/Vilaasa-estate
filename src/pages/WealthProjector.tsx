@@ -11,7 +11,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from "recharts";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  Cell,
+} from "recharts";
+import { Link } from "react-router-dom";
 
 // Exchange rates (fixed for demo - in production, fetch from API)
 const exchangeRates = {
@@ -23,11 +33,14 @@ const exchangeRates = {
 const currencySymbols = {
   INR: "₹",
   USD: "$",
-  AED: "AED ",
+  AED: "د.إ ",
 };
 
 // Default yields by region
-const regionYields: Record<string, { label: string; defaultYield: number; fdRate: number }> = {
+const regionYields: Record<
+  string,
+  { label: string; defaultYield: number; fdRate: number }
+> = {
   india: { label: "India", defaultYield: 6, fdRate: 6 },
   uae: { label: "UAE", defaultYield: 8, fdRate: 3 },
   uk: { label: "UK", defaultYield: 4, fdRate: 4 },
@@ -52,7 +65,12 @@ const performanceOptions = [
 ];
 
 // Animated number component
-const AnimatedNumber = ({ value, prefix = "", suffix = "", decimals = 0 }: {
+const AnimatedNumber = ({
+  value,
+  prefix = "",
+  suffix = "",
+  decimals = 0,
+}: {
   value: number;
   prefix?: string;
   suffix?: string;
@@ -73,7 +91,7 @@ const AnimatedNumber = ({ value, prefix = "", suffix = "", decimals = 0 }: {
         setDisplayValue(value);
         clearInterval(timer);
       } else {
-        setDisplayValue(prev => prev + increment);
+        setDisplayValue((prev) => prev + increment);
       }
     }, stepDuration);
 
@@ -92,7 +110,9 @@ const AnimatedNumber = ({ value, prefix = "", suffix = "", decimals = 0 }: {
 
   return (
     <span className="font-mono tabular-nums">
-      {prefix}{formatNumber(displayValue)}{suffix}
+      {prefix}
+      {formatNumber(displayValue)}
+      {suffix}
     </span>
   );
 };
@@ -101,7 +121,9 @@ const WealthProjector = () => {
   // Stage A: Global Context
   const [currency, setCurrency] = useState<"INR" | "USD" | "AED">("INR");
   const [region, setRegion] = useState("india");
-  const [customYield, setCustomYield] = useState(regionYields.india.defaultYield);
+  const [customYield, setCustomYield] = useState(
+    regionYields.india.defaultYield,
+  );
 
   // Stage B: Investment Inputs
   const [investmentAmount, setInvestmentAmount] = useState(10000000); // 1 Crore default
@@ -134,13 +156,15 @@ const WealthProjector = () => {
   const annualReturn = investmentAmount * (effectiveYield / 100);
   const monthlyPayout = annualReturn / 12;
   const totalRentalIncome = annualReturn * duration;
-  const futureAssetValue = investmentAmount * Math.pow(1 + capitalAppreciation / 100, duration);
+  const futureAssetValue =
+    investmentAmount * Math.pow(1 + capitalAppreciation / 100, duration);
   const capitalGain = futureAssetValue - investmentAmount;
   const totalROI = totalRentalIncome + capitalGain;
 
   // FD comparison
   const fdRate = regionYields[region].fdRate;
-  const fdReturn = investmentAmount * Math.pow(1 + fdRate / 100, duration) - investmentAmount;
+  const fdReturn =
+    investmentAmount * Math.pow(1 + fdRate / 100, duration) - investmentAmount;
   const additionalGain = totalROI - fdReturn;
 
   // Chart data
@@ -179,9 +203,12 @@ const WealthProjector = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <span className="text-gold/60 uppercase tracking-[0.2em] text-xs font-bold">Private Banking Tool</span>
+            <span className="text-gold/60 uppercase tracking-[0.2em] text-xs font-bold">
+              Private Banking Tool
+            </span>
             <h1 className="text-4xl md:text-6xl font-light text-foreground mt-4 mb-4 font-serif">
-              The Vilaasa <span className="italic text-gold">Wealth Projector</span>
+              The Vilaasa{" "}
+              <span className="italic text-gold">Wealth Projector</span>
             </h1>
             <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
               Project your returns across different currencies and geographies.
@@ -195,7 +222,6 @@ const WealthProjector = () => {
       <section className="py-16 px-4 md:px-10">
         <div className="max-w-[1280px] mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-
             {/* Left: Inputs */}
             <motion.div
               initial={{ opacity: 0, x: -20 }}
@@ -206,26 +232,36 @@ const WealthProjector = () => {
               {/* Stage A: Global Context */}
               <div className="p-8 bg-card rounded-lg border border-border">
                 <div className="flex items-center gap-3 mb-6">
-                  <span className="material-symbols-outlined text-gold text-2xl">public</span>
-                  <h2 className="text-xl font-medium text-foreground">Global Context</h2>
+                  <span className="material-symbols-outlined text-gold text-2xl">
+                    public
+                  </span>
+                  <h2 className="text-xl font-medium text-foreground">
+                    Global Context
+                  </h2>
                 </div>
 
                 {/* Currency Toggle */}
                 <div className="mb-6">
-                  <label className="text-muted-foreground text-sm mb-3 block">Select Currency</label>
+                  <label className="text-muted-foreground text-sm mb-3 block">
+                    Select Currency
+                  </label>
                   <div className="flex bg-muted rounded-lg p-1">
                     {(["INR", "USD", "AED"] as const).map((curr) => (
                       <button
                         key={curr}
                         onClick={() => {
-                          const rate = exchangeRates[curr] / exchangeRates[currency];
-                          setInvestmentAmount(Math.round(investmentAmount * rate));
+                          const rate =
+                            exchangeRates[curr] / exchangeRates[currency];
+                          setInvestmentAmount(
+                            Math.round(investmentAmount * rate),
+                          );
                           setCurrency(curr);
                         }}
-                        className={`flex-1 py-3 px-4 rounded-md text-sm font-medium transition-all ${currency === curr
+                        className={`flex-1 py-3 px-4 rounded-md text-sm font-medium transition-all ${
+                          currency === curr
                             ? "bg-gold text-gold-foreground shadow-lg"
                             : "text-muted-foreground hover:text-foreground"
-                          }`}
+                        }`}
                       >
                         {currencySymbols[curr]} {curr}
                       </button>
@@ -235,17 +271,21 @@ const WealthProjector = () => {
 
                 {/* Region Dropdown */}
                 <div>
-                  <label className="text-muted-foreground text-sm mb-3 block">Select Region</label>
+                  <label className="text-muted-foreground text-sm mb-3 block">
+                    Select Region
+                  </label>
                   <Select value={region} onValueChange={setRegion}>
                     <SelectTrigger className="w-full bg-background">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent className="bg-popover">
-                      {Object.entries(regionYields).map(([key, { label, defaultYield }]) => (
-                        <SelectItem key={key} value={key}>
-                          {label} (Typical Yield: {defaultYield}%)
-                        </SelectItem>
-                      ))}
+                      {Object.entries(regionYields).map(
+                        ([key, { label, defaultYield }]) => (
+                          <SelectItem key={key} value={key}>
+                            {label} (Typical Yield: {defaultYield}%)
+                          </SelectItem>
+                        ),
+                      )}
                     </SelectContent>
                   </Select>
                 </div>
@@ -253,8 +293,12 @@ const WealthProjector = () => {
                 {/* Custom Yield */}
                 <div className="mt-6">
                   <div className="flex justify-between items-center mb-3">
-                    <label className="text-muted-foreground text-sm">Expected Annual Yield</label>
-                    <span className="text-gold font-bold text-lg font-mono">{customYield}%</span>
+                    <label className="text-muted-foreground text-sm">
+                      Expected Annual Yield
+                    </label>
+                    <span className="text-gold font-bold text-lg font-mono">
+                      {customYield}%
+                    </span>
                   </div>
                   <Slider
                     value={[customYield]}
@@ -273,14 +317,20 @@ const WealthProjector = () => {
               {/* Stage B: Investment Inputs */}
               <div className="p-8 bg-card rounded-lg border border-border">
                 <div className="flex items-center gap-3 mb-6">
-                  <span className="material-symbols-outlined text-gold text-2xl">account_balance</span>
-                  <h2 className="text-xl font-medium text-foreground">Investment Scenarios</h2>
+                  <span className="material-symbols-outlined text-gold text-2xl">
+                    account_balance
+                  </span>
+                  <h2 className="text-xl font-medium text-foreground">
+                    Investment Scenarios
+                  </h2>
                 </div>
 
                 {/* Investment Amount */}
                 <div className="mb-8">
                   <div className="flex justify-between items-center mb-3">
-                    <label className="text-muted-foreground text-sm">Investment Amount</label>
+                    <label className="text-muted-foreground text-sm">
+                      Investment Amount
+                    </label>
                     <span className="text-gold font-bold text-xl font-mono">
                       {currencySymbols[currency]}{" "}
                       {investmentAmount >= 10000000
@@ -299,23 +349,36 @@ const WealthProjector = () => {
                     className="[&_[role=slider]]:bg-gold [&_[role=slider]]:border-gold [&_.bg-primary]:bg-gold"
                   />
                   <div className="flex justify-between text-xs text-muted-foreground mt-2">
-                    <span>{currencySymbols[currency]}{currency === "INR" ? "45L" : Math.round(range.min).toLocaleString()}</span>
-                    <span>{currencySymbols[currency]}{currency === "INR" ? "20Cr" : Math.round(range.max).toLocaleString()}</span>
+                    <span>
+                      {currencySymbols[currency]}
+                      {currency === "INR"
+                        ? "45L"
+                        : Math.round(range.min).toLocaleString()}
+                    </span>
+                    <span>
+                      {currencySymbols[currency]}
+                      {currency === "INR"
+                        ? "20Cr"
+                        : Math.round(range.max).toLocaleString()}
+                    </span>
                   </div>
                 </div>
 
                 {/* Duration Pills */}
                 <div className="mb-8">
-                  <label className="text-muted-foreground text-sm mb-3 block">Investment Duration</label>
+                  <label className="text-muted-foreground text-sm mb-3 block">
+                    Investment Duration
+                  </label>
                   <div className="flex gap-3">
                     {durationOptions.map((opt) => (
                       <button
                         key={opt.value}
                         onClick={() => setDuration(opt.value)}
-                        className={`flex-1 py-3 px-4 rounded-lg border text-sm font-medium transition-all ${duration === opt.value
+                        className={`flex-1 py-3 px-4 rounded-lg border text-sm font-medium transition-all ${
+                          duration === opt.value
                             ? "bg-gold/20 border-gold text-gold"
                             : "border-border text-muted-foreground hover:border-gold/50"
-                          }`}
+                        }`}
                       >
                         {opt.label}
                       </button>
@@ -325,19 +388,24 @@ const WealthProjector = () => {
 
                 {/* Performance Segmented Control */}
                 <div>
-                  <label className="text-muted-foreground text-sm mb-3 block">Expected Occupancy / Performance</label>
+                  <label className="text-muted-foreground text-sm mb-3 block">
+                    Expected Occupancy / Performance
+                  </label>
                   <div className="flex bg-muted rounded-lg p-1">
                     {performanceOptions.map((opt) => (
                       <button
                         key={opt.value}
                         onClick={() => setPerformance(opt.value)}
-                        className={`flex-1 py-3 px-2 rounded-md text-sm transition-all ${performance === opt.value
+                        className={`flex-1 py-3 px-2 rounded-md text-sm transition-all ${
+                          performance === opt.value
                             ? "bg-background text-foreground shadow-md"
                             : "text-muted-foreground hover:text-foreground"
-                          }`}
+                        }`}
                       >
                         <span className="block font-medium">{opt.label}</span>
-                        <span className="text-xs opacity-70">{opt.percentage}</span>
+                        <span className="text-xs opacity-70">
+                          {opt.percentage}
+                        </span>
                       </button>
                     ))}
                   </div>
@@ -357,10 +425,16 @@ const WealthProjector = () => {
                 <div className="bg-[#0c1a14] text-white p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <h3 className="text-sm uppercase tracking-wider text-gold/80">Wealth Projection</h3>
-                      <p className="text-2xl font-serif mt-1">Financial Statement</p>
+                      <h3 className="text-sm uppercase tracking-wider text-gold/80">
+                        Wealth Projection
+                      </h3>
+                      <p className="text-2xl font-serif mt-1">
+                        Financial Statement
+                      </p>
                     </div>
-                    <span className="material-symbols-outlined text-4xl text-gold/40">assessment</span>
+                    <span className="material-symbols-outlined text-4xl text-gold/40">
+                      assessment
+                    </span>
                   </div>
                 </div>
 
@@ -368,21 +442,33 @@ const WealthProjector = () => {
                 <div className="p-8 space-y-6">
                   {/* Est. Annual Yield */}
                   <div className="flex items-center justify-between pb-4 border-b border-gold/20">
-                    <span className="text-[#0c1a14] font-serif">Est. Annual Yield</span>
-                    <span className="text-2xl font-bold text-primary font-mono">{effectiveYield.toFixed(1)}%</span>
+                    <span className="text-[#0c1a14] font-serif">
+                      Est. Annual Yield
+                    </span>
+                    <span className="text-2xl font-bold text-primary font-mono">
+                      {effectiveYield.toFixed(1)}%
+                    </span>
                   </div>
 
                   {/* Monthly Payout - Featured */}
                   <div className="bg-[#0c1a14] rounded-lg p-6 text-center">
-                    <p className="text-gold/70 text-sm uppercase tracking-wider mb-2">Monthly Payout</p>
+                    <p className="text-gold/70 text-sm uppercase tracking-wider mb-2">
+                      Monthly Payout
+                    </p>
                     <p className="text-4xl md:text-5xl font-bold text-white font-mono">
-                      <AnimatedNumber value={monthlyPayout} prefix={currencySymbols[currency]} decimals={2} />
+                      <AnimatedNumber
+                        value={monthlyPayout}
+                        prefix={currencySymbols[currency]}
+                        decimals={2}
+                      />
                     </p>
                   </div>
 
                   {/* Total Payout */}
                   <div className="flex items-center justify-between py-3">
-                    <span className="text-[#0c1a14]/70 font-serif">Total Payout over {duration} Years</span>
+                    <span className="text-[#0c1a14]/70 font-serif">
+                      Total Payout over {duration} Years
+                    </span>
                     <span className="text-xl font-bold text-[#0c1a14] font-mono">
                       {formatCurrency(totalRentalIncome)}
                     </span>
@@ -391,8 +477,12 @@ const WealthProjector = () => {
                   {/* Capital Appreciation */}
                   <div className="flex items-center justify-between py-3 border-b border-gold/20">
                     <div>
-                      <span className="text-[#0c1a14]/70 font-serif block">Projected Asset Value</span>
-                      <span className="text-xs text-[#0c1a14]/50">({capitalAppreciation}% annual appreciation)</span>
+                      <span className="text-[#0c1a14]/70 font-serif block">
+                        Projected Asset Value
+                      </span>
+                      <span className="text-xs text-[#0c1a14]/50">
+                        ({capitalAppreciation}% annual appreciation)
+                      </span>
                     </div>
                     <span className="text-xl font-bold text-[#0c1a14] font-mono">
                       {formatCurrency(futureAssetValue)}
@@ -403,17 +493,26 @@ const WealthProjector = () => {
                   <div className="bg-gold/10 rounded-lg p-6 mt-4">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-[#0c1a14]/70 text-sm uppercase tracking-wider">Total ROI</p>
-                        <p className="text-xs text-[#0c1a14]/50">(Rental + Appreciation)</p>
+                        <p className="text-[#0c1a14]/70 text-sm uppercase tracking-wider">
+                          Total ROI
+                        </p>
+                        <p className="text-xs text-[#0c1a14]/50">
+                          (Rental + Appreciation)
+                        </p>
                       </div>
                       <span className="text-3xl md:text-4xl font-bold text-primary font-mono">
-                        <AnimatedNumber value={totalROI} prefix={currencySymbols[currency]} decimals={2} />
+                        <AnimatedNumber
+                          value={totalROI}
+                          prefix={currencySymbols[currency]}
+                          decimals={2}
+                        />
                       </span>
                     </div>
                   </div>
 
                   <p className="text-xs text-[#0c1a14]/50 text-center italic">
-                    *Projections based on market averages. Past performance is not indicative of future results.
+                    *Projections based on market averages. Past performance is
+                    not indicative of future results.
                   </p>
                 </div>
               </div>
@@ -443,12 +542,15 @@ const WealthProjector = () => {
             viewport={{ once: true }}
             className="text-center mb-12"
           >
-            <span className="text-gold/60 uppercase tracking-[0.2em] text-xs font-bold">The Opportunity Cost</span>
+            <span className="text-gold/60 uppercase tracking-[0.2em] text-xs font-bold">
+              The Opportunity Cost
+            </span>
             <h2 className="text-3xl md:text-4xl font-light text-foreground mt-4 mb-4 font-serif">
               Smart Money <span className="italic text-gold">Comparison</span>
             </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              See how your investment in Vilaasa Estate compares to traditional banking options
+              See how your investment in Vilaasa Estate compares to traditional
+              banking options
             </p>
           </motion.div>
 
@@ -466,7 +568,10 @@ const WealthProjector = () => {
                   layout="vertical"
                   margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
                 >
-                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    stroke="hsl(var(--border))"
+                  />
                   <XAxis
                     type="number"
                     tickFormatter={(value) => formatCurrency(value)}
@@ -481,7 +586,10 @@ const WealthProjector = () => {
                     width={120}
                   />
                   <Tooltip
-                    formatter={(value: number) => [formatCurrency(value), "Total Return"]}
+                    formatter={(value: number) => [
+                      formatCurrency(value),
+                      "Total Return",
+                    ]}
                     contentStyle={{
                       backgroundColor: "hsl(var(--card))",
                       border: "1px solid hsl(var(--border))",
@@ -506,19 +614,29 @@ const WealthProjector = () => {
             >
               <div className="p-8 bg-[#0c1a14] rounded-lg border border-gold/20">
                 <div className="flex items-start gap-4">
-                  <span className="material-symbols-outlined text-4xl text-gold">trending_up</span>
+                  <span className="material-symbols-outlined text-4xl text-gold">
+                    trending_up
+                  </span>
                   <div>
-                    <h3 className="text-xl font-medium text-white mb-2">The Vilaasa Advantage</h3>
+                    <h3 className="text-xl font-medium text-white mb-2">
+                      The Vilaasa Advantage
+                    </h3>
                     <p className="text-white/70 leading-relaxed mb-6">
-                      By choosing Vilaasa Estate over a traditional Fixed Deposit, you potentially gain an additional:
+                      By choosing Vilaasa Estate over a traditional Fixed
+                      Deposit, you potentially gain an additional:
                     </p>
                     <div className="bg-gold/20 rounded-lg p-4 inline-block">
                       <span className="text-3xl md:text-4xl font-bold text-gold font-mono">
-                        <AnimatedNumber value={Math.max(0, additionalGain)} prefix={currencySymbols[currency]} decimals={2} />
+                        <AnimatedNumber
+                          value={Math.max(0, additionalGain)}
+                          prefix={currencySymbols[currency]}
+                          decimals={2}
+                        />
                       </span>
                     </div>
                     <p className="text-white/50 text-sm mt-4">
-                      over {duration} years compared to traditional banking at {fdRate}% p.a.
+                      over {duration} years compared to traditional banking at{" "}
+                      {fdRate}% p.a.
                     </p>
                   </div>
                 </div>
@@ -526,14 +644,26 @@ const WealthProjector = () => {
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="p-6 bg-background rounded-lg border border-border">
-                  <p className="text-muted-foreground text-xs uppercase tracking-wider mb-2">Vilaasa Return</p>
-                  <p className="text-2xl font-bold text-primary font-mono">{formatCurrency(totalROI)}</p>
-                  <p className="text-xs text-muted-foreground mt-1">@ {effectiveYield.toFixed(1)}% effective yield</p>
+                  <p className="text-muted-foreground text-xs uppercase tracking-wider mb-2">
+                    Vilaasa Return
+                  </p>
+                  <p className="text-2xl font-bold text-primary font-mono">
+                    {formatCurrency(totalROI)}
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    @ {effectiveYield.toFixed(1)}% effective yield
+                  </p>
                 </div>
                 <div className="p-6 bg-background rounded-lg border border-border">
-                  <p className="text-muted-foreground text-xs uppercase tracking-wider mb-2">Bank FD Return</p>
-                  <p className="text-2xl font-bold text-muted-foreground font-mono">{formatCurrency(fdReturn)}</p>
-                  <p className="text-xs text-muted-foreground mt-1">@ {fdRate}% p.a. (standard)</p>
+                  <p className="text-muted-foreground text-xs uppercase tracking-wider mb-2">
+                    Bank FD Return
+                  </p>
+                  <p className="text-2xl font-bold text-muted-foreground font-mono">
+                    {formatCurrency(fdReturn)}
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    @ {fdRate}% p.a. (standard)
+                  </p>
                 </div>
               </div>
             </motion.div>
@@ -550,21 +680,22 @@ const WealthProjector = () => {
             viewport={{ once: true }}
           >
             <h2 className="text-3xl md:text-4xl font-light text-foreground mb-4 font-serif">
-              Ready to Project Your <span className="italic text-gold">Wealth?</span>
+              Ready to Project Your{" "}
+              <span className="italic text-gold">Wealth?</span>
             </h2>
             <p className="text-muted-foreground mb-8 max-w-xl mx-auto">
-              Connect with our investment advisors for a personalized wealth projection
-              tailored to your financial goals.
+              Connect with our investment advisors for a personalized wealth
+              projection tailored to your financial goals.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button variant="hero" size="lg" className="gap-2">
-                <span className="material-symbols-outlined">calendar_month</span>
-                Schedule Consultation
-              </Button>
-              <Button variant="heroOutline" size="lg" className="gap-2">
-                <span className="material-symbols-outlined">call</span>
-                +91 98765 43210
-              </Button>
+              <Link to="/calendar">
+                <Button variant="hero" size="lg" className="gap-2">
+                  <span className="material-symbols-outlined">
+                    calendar_month
+                  </span>
+                  Schedule Consultation
+                </Button>
+              </Link>
             </div>
           </motion.div>
         </div>
